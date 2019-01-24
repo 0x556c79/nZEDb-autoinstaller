@@ -84,7 +84,7 @@ echo -e "DONE!"
 # Installing Python 3 and some modules
 echo -e $YELLOW
 echo -e "---> [Installing Python 3 and Modules...]"$BLACK
-sudo apt-get install -y python-setuptools software-properties-common python3-setuptools python3-pip python-pip && \
+sudo apt-get install -y python-setuptools python-dev software-properties-common python3-setuptools python3-pip python-pip && \
 python -m easy_install pip  && \
 easy_install cymysql && \
 easy_install pynntp && \
@@ -104,7 +104,7 @@ echo -e "---> [Install yEnc from source...]"$BLACK
 cd ~
 mkdir yenc
 cd yenc
-wget http://heanet.dl.sourceforge.net/project/yydecode/yydecode/0.2.10/yydecode-0.2.10.tar.gz
+wget https://datapacket.dl.sourceforge.net/project/yydecode/yydecode/0.2.10/yydecode-0.2.10.tar.gz
 tar xzf yydecode-0.2.10.tar.gz
 cd yydecode-0.2.10
 ./configure
@@ -126,53 +126,70 @@ composer -V
 echo -e $GREEN
 echo -e "DONE!"
 
-#Add PHP 5.6 ppa:ondrej/php
+#Add PHP 7 ppa:ondrej/php
 echo -e $YELLOW
-echo -e "---> [Add PHP 5.6 Repo...]"
+echo -e "---> [Add PHP 7 Repo...]"
 echo -e "You must press -> Enter <- to confirm"$BLACK
-sudo add-apt-repository ppa:ondrej/php
+sudo add-apt-repository -y ppa:ondrej/php
+sudo apt-add-repository -y multiverse
 echo -e $GREEN
 echo -e "DONE!"
 
-# Installing PHP5.6
+# Installing PHP 7.2
 echo -e $YELLOW
 echo -e "---> [Installing PHP & Extensions...]"$BLACK
-sudo apt-get install -y libpcre3-dev php5.6 php5.6-dev php-pear php5.6-gd php5.6-mysqlnd php5.6-curl php5.6-mcrypt > /dev/null
+sudo apt-get install -y libpcre3-dev php7.2-fpm php7.2-dev php-pear php7.2-gd php7.2-mysql php7.2-curl php7.2-common  php7.2-json php7.2-cli > /dev/null
 echo -e $GREEN
 echo -e "DONE!"
 
-# Configure PHP 5.6
+# Configure PHP 7.2
 echo -e $YELLOW
-echo -e "---> [Do some magic with the php5.6 config...]"$BLACK
-sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php5/cli/php.ini
-sed -ri 's/(memory_limit =) ([0-9]+)/\1 -1/' /etc/php5/cli/php.ini
-sed -ri 's/(upload_max_filesize =) ([0-9]+)/\1 100/' /etc/php5/cli/php.ini
-sed -ri 's/(post_max_size =) ([0-9]+)/\1 150/' /etc/php5/cli/php.ini
-sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php5/cli/php.ini
-sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php5/fpm/php.ini
-sed -ri 's/(memory_limit =) ([0-9]+)/\1 1024/' /etc/php5/fpm/php.ini
-sed -ri 's/(upload_max_filesize =) ([0-9]+)/\1 100/' /etc/php5/fpm/php.ini
-sed -ri 's/(post_max_size =) ([0-9]+)/\1 150/' /etc/php5/fpm/php.ini
-sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php5/fpm/php.ini
+echo -e "---> [Do some magic with the php7.2 config...]"$BLACK
+sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php/7.2/cli/php.ini
+sed -ri 's/(memory_limit =) ([0-9]+)/\1 -1/' /etc/php/7.2/cli/php.ini
+sed -ri 's/(upload_max_filesize =) ([0-9]+)/\1 100/' /etc/php/7.2/cli/php.ini
+sed -ri 's/(post_max_size =) ([0-9]+)/\1 150/' /etc/php/7.2/cli/php.ini
+sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.2/cli/php.ini
+sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php/7.2/fpm/php.ini
+sed -ri 's/(memory_limit =) ([0-9]+)/\1 1024/' /etc/php/7.2/fpm/php.ini
+sed -ri 's/(upload_max_filesize =) ([0-9]+)/\1 100/' /etc/php/7.2/fpm/php.ini
+sed -ri 's/(post_max_size =) ([0-9]+)/\1 150/' /etc/php/7.2/fpm/php.ini
+sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.2/fpm/php.ini
 echo -e $GREEN
 echo -e "DONE!"
 
-# Install yEnc decoder extension for PHP5
+# Install yEnc decoder extension for PHP 7
 echo -e $YELLOW
-echo -e "---> [Install yEnc decoder extension for PHP5...]"$BLACK
-cd /tmp && \
- git clone https://github.com/kevinlekiller/simple_php_yenc_decode && \
- cd simple_php_yenc_decode/ && \
- sh ubuntu.sh && \
- cd ~ && \
- rm -rf /tmp/simple_php_yenc_decode/
+echo -e "---> [Install yEnc decoder extension for PHP7...]"$BLACK
+conf=`php -i | grep -o "Scan this dir for additional .ini files => \S*" | cut -d\  -f9`
+major=`php -r "echo PHP_VERSION;" | cut -d. -f1`
+minor=`php -r "echo PHP_VERSION;" | cut -d. -f2`
+phpver="$major.$minor"
+
+fpm -s dir -t deb \
+    -n php$phpver-yenc -v 1.3.0 \
+    --depends "php${phpver}" \
+    --description "php-yenc extension build for PHP ${phpver}" \
+    --url 'https://github.com/niel/php-yenc' \
+    --after-install=post-install.sh \
+     /etc/php/$phpver/mods-available/yenc.ini \
+     $conf/20-yenc.ini \
+     $(php-config  --extension-dir)/yenc.so
 echo -e $GREEN
 echo -e "DONE!"
 
-# Installing MYSQL 5.6
+# Installing MariaDB 
 echo -e $YELLOW
 echo -e "---> [Installing MySQL...]"$BLACK
-sudo apt-get install -y mysql-server-5.6 mysql-client-5.6
+sudo apt-get install - y software-properties-common > /dev/null
+sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8 -y
+sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://ftp.hosteurope.de/mirror/mariadb.org/repo/10.3/ubuntu bionic main' -y
+sudo apt update
+sudo apt install -y mariadb-server mariadb-client > /dev/null
+sudo systemctl start mysql
+sudo rm /etc/systemd/system/mysql.service
+sudo rm /etc/systemd/system/mysqld.service
+sudo systemctl enable mysql
 echo -e $GREEN
 echo -e "DONE!"
 
@@ -209,25 +226,63 @@ echo -e "DONE!"
 # Install Apache 2.4
 echo -e $YELLOW
 echo -e "---> [Installing Apache 2...]"$BLACK
-sudo apt-get install -y apache2 libapache2-mod-php5.6 > /dev/null
+sudo apt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
 sudo echo '<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
     ServerName localhost
-    DocumentRoot "/var/www/nZEDb/www"
-    LogLevel warn
-    ServerSignature Off
-    ErrorLog /var/log/apache2/error.log
-    <Directory "/var/www/nZEDb/www">
-        Options FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-    Alias /covers /var/www/nZEDb/resources/covers
-</VirtualHost>' > nZEDb.conf
+    Redirect / https://localhost.de
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+    <VirtualHost *:443>
+        ServerAdmin webmaster@localhost
+        ServerName localhost
+        #ServerAlias somedomain # Optional
+        DocumentRoot "/var/www/nZEDb/www"
+        Alias /covers /var/www/nZEDb/resources/covers
+        LogLevel warn
+        ServerSignature Off
+        ErrorLog /var/log/apache2/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+        SSLEngine on
+        SSLVerifyClient require
+        SSLVerifyDepth 1
+        SSLCertificateFile		/etc/ssl/certs/localhost.pem
+        SSLCertificateKeyFile		/etc/ssl/private/localhost.key
+        #SSLCertificateChainFile	/etc/apache2/ssl.crt/server-ca.crt
+        SSLCACertificatePath		/etc/ssl/certs/ # For Cloudflare
+	SSLCACertificateFile		/etc/ssl/certs/origin-pull-ca.pem # For Cloudflare
+
+        <FilesMatch "\.(cgi|shtml|phtml|php)$">
+                SSLOptions +StdEnvVars
+        </FilesMatch>
+        <Directory /usr/lib/cgi-bin>
+                SSLOptions +StdEnvVars
+        </Directory>
+
+        <Directory "/var/www/nZEDb/www">
+                Options FollowSymLinks
+                AllowOverride All
+                Require all granted
+        </Directory>
+
+        <Proxy "fcgi://localhost:9000" enablereuse=on max=10>
+        </Proxy>
+        <FilesMatch \.php$>
+            <If "-f %{REQUEST_FILENAME}">
+                SetHandler "proxy:unix:/run/php/php7.2-fpm.sock|fcgi://localhost/"
+            </If>
+        </FilesMatch>
+	</VirtualHost>
+</IfModule>' > nZEDb.conf
 sudo mv nZEDb.conf /etc/apache2/sites-available/
 echo -e $CYAN
 read -p "Set Servername (eg. yourindex.com):" servername
 sed -i "s/\blocalhost\b/$servername/g" /etc/apache2/sites-available/nZEDb.conf
+echo -e $CYAN
+echo -e "---> [Create SSL-Certificate and Key file...]"$BLACK
+sudo touch /etc/ssl/certs/$servername.pem
+sudo touch /etc/ssl/private/$servername.key
 echo -e $CYAN
 echo -e "---> [Disable Apache 2 default site...]"$BLACK
 sudo a2dissite 000-default
@@ -246,7 +301,7 @@ echo -e "DONE!"
 # Install memcached
 echo -e $YELLOW
 echo -e "---> [Installing memcached...]"$BLACK
-sudo apt-get install -y memcached php5.6-memcached > /dev/null
+sudo apt-get install -y memcached php-memcached > /dev/null
 echo -e $GREEN
 echo -e "DONE!"
 
@@ -284,7 +339,7 @@ echo -e $RED"STOP! WARING! STOP! WARNING! STOP! WARNING!"$BLACK
 echo -e $YELLOW
 echo -e "-------------------------------------------------"
 echo -e "# You must complete the install of nzedb first  #"
-echo -e "# Go to http://yourdomain.com/install           #"
+echo -e "# Go to http://$servername/install              #"
 echo -e "#                                               #"
 echo -e "# After the nzedb Setup is finish you can       #"
 echo -e "# continue the Setup Script! OK?                #"
@@ -296,19 +351,6 @@ echo -e $RED"STOP! WARING! STOP! WARNING! STOP! WARNING!"$BLACK
 
 read -p "Press [Enter] to continue..."
 
-# PreDB Dump
-echo -e $YELLOW
-echo -e "---> [Importing Initial PreDB Dump...]"$BLACK
-sudo wget https://www.dropbox.com/s/qkmgbvmdv9a5w8q/predb_dump_08172015.tar.gz
-sudo gunzip predb_dump_08172015.tar.gz
-sudo tar -xvf predb_dump_08172015.tar
-echo
-echo -e $RED"PLEASE BE PATIENT!  THIS   + W I L L +   TAKE A LONG TIME!"$BLACK
-echo
-sudo php /var/www/nzedb/misc/testing/PreDB/dump_predb.php remote tmp/predb_dump_08172015.csv
-echo -e $GREEN
-echo -e "DONE!"
-
 # Import Daily Dumps
 echo -e $YELLOW
 echo -e "---> [Importing Daily Dumps...]"$BLACK
@@ -317,16 +359,22 @@ sudo chown -R $usernamenzb:www-data /var/www/nzedb/cli
 echo
 echo -e $RED"PLEASE BE PATIENT!  THIS   + M A Y +   TAKE A LONG TIME!"$BLACK
 echo
-sudo php /var/www/nzedb/cli/data/predb_import_daily_batch.php 0 remote true
+sudo php /var/www/nzedb/cli/data/predb_import_daily_batch.php 0 local true
 echo -e $GREEN
 echo -e "DONE!"
 
 # Fixing Install TMUX
 echo -e $YELLOW
 echo -e "---> [Installing TMUX...]"$BLACK
-sudo apt-get install -y tmux time python-setuptools python-pip python3-setuptools python3-pip > /dev/null
-sudo easy_install cymysql pynntp socketpool
-sudo pip3 install cymysql pynntp socketpool
+sudo apt install libevent-dev git autotools-dev automake pkg-config ncurses-dev python -y > /dev/null
+sudo apt remove tmux -y > /dev/null
+git clone https://github.com/tmux/tmux.git --branch 2.0 --single-branch
+cd tmux
+./autogen.sh
+./configure
+make -j4
+sudo make install
+make clean
 echo -e $GREEN
 echo -e "DONE!"
 
