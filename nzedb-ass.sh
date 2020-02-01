@@ -63,6 +63,8 @@ function CHECK_NZEDB_USER {
 		echo -e "$GREEN" "$usernamenzb alredy exsists and is in the right groups..."
 		fi
 	else
+		echo -e "$YELLOW"
+		echo -e "---> [ Creating user and add to www-data group]""$BLACK"
 		sudo useradd -r -s /bin/false "$usernamenzb"
 		sudo usermod -aG www-data "$usernamenzb"
 	fi
