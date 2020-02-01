@@ -14,7 +14,6 @@ GREEN='\e[92m'
 
 # Variables
 
-
 # Make sure to clear the Terminal
 clear
 
@@ -28,10 +27,20 @@ echo -e " \_____  \   |    |    \     /  /  ____/|  |/ /"
 echo -e " /        \  |    |    /     \ /       \|    < "
 echo -e "/_______  /  |____|   /___/\  \\_______ \__|_ \"
 echo -e "        \/                  \_/        \/    \/"
-
-
+echo -e ""
+echo -e "               __     __         __  __"
+echo -e " __ _____  ___/ /__ _/ /____ ___/ / / /  __ __"
+echo -e "/ // / _ \/ _  / _ `/ __/ -_) _  / / _ \/ // /"
+echo -e "\_,_/ .__/\_,_/\_,_/\__/\__/\_,_/ /_.__/\_, /"
+echo -e "   /_/                                 /___/"
+echo -e ""
+echo -e "  ___       ____ ____   __       _____ _____ ___"
+echo -e " / _ \__  _| ___| ___| / /_   __|___  |___  / _ \"
+echo -e "| | | \ \/ /___ \___ \| '_ \ / __| / /   / / (_) |"
+echo -e "| |_| |>  < ___) |__) | (_) | (__ / /   / / \__, |"
+echo -e " \___//_/\_\____/____/ \___/ \___/_/   /_/    /_/"
 echo -e $CYAN
-echo -e "nZEDb Auto Installer by STX2k"
+echo -e "nZEDb Auto Installer by STX2k updated by 0x556x79"
 echo
 
 
@@ -99,21 +108,21 @@ echo -e $GREEN
 echo -e "DONE!"
 
 # Installing yEnc - Needed for nzb Headers
-echo -e $YELLOW
-echo -e "---> [Install yEnc from source...]"$BLACK
-cd ~
-mkdir yenc
-cd yenc
-wget https://datapacket.dl.sourceforge.net/project/yydecode/yydecode/0.2.10/yydecode-0.2.10.tar.gz
-tar xzf yydecode-0.2.10.tar.gz
-cd yydecode-0.2.10
-./configure
-make
-sudo make install
-cd ../..
-rm -rf ~/yenc
-echo -e $GREEN
-echo -e "DONE!"
+#echo -e $YELLOW
+#echo -e "---> [Install yEnc from source...]"$BLACK
+#cd ~
+#mkdir yenc
+#cd yenc
+#wget https://datapacket.dl.sourceforge.net/project/yydecode/yydecode/0.2.10/yydecode-0.2.10.tar.gz
+#tar xzf yydecode-0.2.10.tar.gz
+#cd yydecode-0.2.10
+#./configure
+#make
+#sudo make install
+#cd ../..
+#rm -rf ~/yenc
+#echo -e $GREEN
+#echo -e "DONE!"
 
 # Installing Composer for nZEDb
 echo -e $YELLOW
@@ -132,6 +141,7 @@ echo -e "---> [Add PHP 7 Repo...]"
 echo -e "You must press -> Enter <- to confirm"$BLACK
 sudo add-apt-repository -y ppa:ondrej/php
 sudo apt-add-repository -y multiverse
+sudo apt-get update -y
 echo -e $GREEN
 echo -e "DONE!"
 
@@ -190,6 +200,19 @@ sudo systemctl start mysql
 sudo rm /etc/systemd/system/mysql.service
 sudo rm /etc/systemd/system/mysqld.service
 sudo systemctl enable mysql
+echo -e $GREEN
+echo -e "DONE!"
+
+# Configure MariaB
+echo -e $YELLOW
+echo -e "---> [Configure MariaB...]"$BLACK
+sudo echo '### configurations by nZEDb ####
+innodb_file_per_table = 1
+innodb_large_prefix = 1 ## Only needed if version < 10.2.2
+max_allowed_packet = 16M
+group_concat_max_len = 8192
+sql_mode                = '' ## Needed only if you want IRCScraper to work | fix Invalid Datetime' >> /etc/mysql/my.cnf
+sudo systemctl restart mysql
 echo -e $GREEN
 echo -e "DONE!"
 
