@@ -4,7 +4,7 @@ Drinking a cup of coffee and wait until ZEDb installed!
 
 The idea and the source comes from [@PREngineer](https://github.com/PREngineer) | I have adapted the script and packed into a single file! This is my first bash script, I have created it to improve my knowledge on Linux.
 
-* Testet with Ubuntu 14.04 LTS
+* Testet with Ubuntu 18.04.2
 
 ## nZEDb-ass.sh
 
@@ -15,10 +15,10 @@ The idea and the source comes from [@PREngineer](https://github.com/PREngineer) 
 * Install ffmpeg, mediainfo, p7zip-full, unrar and lame
 * Install yEnc from Source
 * Install Composer
-* Install PHP 5.6 & Extensions
+* Install PHP 7.2 & Extensions
   * Set the right Config for nZEDb to the php.ini
   * Install yEnc decoder extension for PHP5
-* Install MySQL 5.6
+* Install MariaDB 10
   * Create the 'nzedb' user in MySQL and grant it permission
   * Secure Mysql installation
 * Install Apache2
