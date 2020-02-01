@@ -107,23 +107,6 @@ pip3 list > /dev/null
 echo -e $GREEN
 echo -e "DONE!"
 
-# Installing yEnc - Needed for nzb Headers
-#echo -e $YELLOW
-#echo -e "---> [Install yEnc from source...]"$BLACK
-#cd ~
-#mkdir yenc
-#cd yenc
-#wget https://datapacket.dl.sourceforge.net/project/yydecode/yydecode/0.2.10/yydecode-0.2.10.tar.gz
-#tar xzf yydecode-0.2.10.tar.gz
-#cd yydecode-0.2.10
-#./configure
-#make
-#sudo make install
-#cd ../..
-#rm -rf ~/yenc
-#echo -e $GREEN
-#echo -e "DONE!"
-
 # Installing Composer for nZEDb
 echo -e $YELLOW
 echo -e "---> [Install Composer...]"$BLACK
@@ -208,10 +191,12 @@ echo -e $YELLOW
 echo -e "---> [Configure MariaB...]"$BLACK
 sudo echo '### configurations by nZEDb ####
 innodb_file_per_table = 1
-innodb_large_prefix = 1 ## Only needed if version < 10.2.2
 max_allowed_packet = 16M
 group_concat_max_len = 8192
-sql_mode                = '' ## Needed only if you want IRCScraper to work | fix Invalid Datetime' >> /etc/mysql/my.cnf
+sql_mode                = ''
+innodb_buffer_pool_dump_at_shutdown = ON
+innodb_buffer_pool_load_at_startup  = ON
+innodb_checksum_algorithm           = crc32' >> /etc/mysql/my.cnf
 sudo systemctl restart mysql
 echo -e $GREEN
 echo -e "DONE!"
@@ -251,8 +236,8 @@ echo -e $YELLOW
 echo -e "---> [Installing Apache 2...]"$BLACK
 sudo apt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
 sudo echo '<VirtualHost *:80>
-    ServerName localhost
-    Redirect / https://localhost.de
+    ServerName FQDN
+    Redirect / https://FQDN.de
 </VirtualHost>
 
 <IfModule mod_ssl.c>
@@ -270,11 +255,11 @@ sudo echo '<VirtualHost *:80>
         SSLEngine on
         SSLVerifyClient require
         SSLVerifyDepth 1
-        SSLCertificateFile		/etc/ssl/certs/localhost.pem
-        SSLCertificateKeyFile		/etc/ssl/private/localhost.key
+        SSLCertificateFile		/etc/ssl/certs/FQDN.pem
+        SSLCertificateKeyFile		/etc/ssl/private/FQDN.key
         #SSLCertificateChainFile	/etc/apache2/ssl.crt/server-ca.crt
-        SSLCACertificatePath		/etc/ssl/certs/ # For Cloudflare
-	SSLCACertificateFile		/etc/ssl/certs/origin-pull-ca.pem # For Cloudflare
+        #SSLCACertificatePath		/etc/ssl/certs/ # For Cloudflare
+	#SSLCACertificateFile		/etc/ssl/certs/origin-pull-ca.pem # For Cloudflare
 
         <FilesMatch "\.(cgi|shtml|phtml|php)$">
                 SSLOptions +StdEnvVars
@@ -301,11 +286,12 @@ sudo echo '<VirtualHost *:80>
 sudo mv nZEDb.conf /etc/apache2/sites-available/
 echo -e $CYAN
 read -p "Set Servername (eg. yourindex.com):" servername
-sed -i "s/\blocalhost\b/$servername/g" /etc/apache2/sites-available/nZEDb.conf
+sed -i "s/\bFQDN\b/$servername/g" /etc/apache2/sites-available/nZEDb.conf
 echo -e $CYAN
 echo -e "---> [Create SSL-Certificate and Key file...]"$BLACK
 sudo touch /etc/ssl/certs/$servername.pem
 sudo touch /etc/ssl/private/$servername.key
+echo -e $RED" YOU SHOULD PROBABLY ISSUE A NEW CERTIFICATE FROM LET'S ENCRYPT OR SOMWHERE ELSE TO AVOID SSL WARNINGS IN THE BRWOSER"$BLACK
 echo -e $CYAN
 echo -e "---> [Disable Apache 2 default site...]"$BLACK
 sudo a2dissite 000-default
@@ -364,13 +350,17 @@ echo -e "-------------------------------------------------"
 echo -e "# You must complete the install of nzedb first  #"
 echo -e "# Go to http://$servername/install              #"
 echo -e "#                                               #"
+echo -e "# YOU SHOULD PROBABLY ALSO ISSUE A NEW          #"
+echo -e "# CERTIFICATE FROM LET'S ENCRYPT OR SOMWHERE    #"
+echo -e "# ELSE TO AVOID SSL WARNINGS IN THE BRWOSER     #"
+echo -e "#                                               #"
 echo -e "# After the nzedb Setup is finish you can       #"
 echo -e "# continue the Setup Script! OK?                #"
 echo -e "-------------------------------------------------"$BLACK
 
 echo -e $RED"STOP! WARING! STOP! WARNING! STOP! WARNING!"$BLACK
 echo -e $RED"STOP! WARING! STOP! WARNING! STOP! WARNING!"$BLACK
-
+echo -e $RED" YOU SHOULD PROBABLY ISSUE A NEW CERTIFICATE FROM LET'S ENCRYPT OR SOMWHERE ELSE TO AVOID SSL WARNINGS IN THE BRWOSER"$BLACK
 
 read -p "Press [Enter] to continue..."
 
