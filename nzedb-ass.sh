@@ -12,9 +12,8 @@ BLACK='\033[0m'
 CYAN='\e[96m'
 GREEN='\e[92m'
 
-# 
-set -e
-set -o pipefail
+# stay safe
+set -euxo pipefail
 
 # Make sure to clear the Terminal
 clear
@@ -168,10 +167,10 @@ sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/m
 sudo apt update -y
 sudo apt install -y mariadb-server mariadb-client > /dev/null
 sudo systemctl start mysql
-sudo rm /etc/systemd/system/mysql.service
+sudo rm /etc/systemd/system/mysql.service || true
 echo -e "$GREEN"
 echo -e "[OK!]"
-sudo rm /etc/systemd/system/mysqld.service
+sudo rm /etc/systemd/system/mysqld.service || true
 echo -e "$GREEN"
 echo -e "[OK!]"
 sudo systemctl enable mysql
