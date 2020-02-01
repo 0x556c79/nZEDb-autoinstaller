@@ -13,7 +13,7 @@ CYAN='\e[96m'
 GREEN='\e[92m'
 
 # stay safe
-set -euxo pipefail
+set -euo pipefail
 
 # Make sure to clear the Terminal
 clear
