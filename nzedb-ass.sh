@@ -63,7 +63,7 @@ read -r -p "User Account Name (eg. nzedb):" usernamenzb
 function CHECK_NZEDB_USER {
 	if [ "$(id -u "$usernamenzb")" != "0" ]; then
 		if [ "$(id -nG "$usernamenzb" | grep -qw www-data)" != "0" ]; then
-		echo -e "$GREEN" "$usernamenzb alredy in the right groups..." 1>&2
+		echo -e "$GREEN" "$usernamenzb alredy exsists and is in the right groups..."
 		fi
 	else
 		sudo useradd -r -s /bin/false "$usernamenzb"
