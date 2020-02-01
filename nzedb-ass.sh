@@ -73,7 +73,7 @@ echo -e "[DONE!]"
 # Installing Extra Software like mediainfo
 echo -e "$YELLOW"
 echo -e "---> [Install ffmpeg, mediainfo, p7zip-full, unrar and lame...]""$BLACK"
-sudo apt-get install -y unrar p7zip-full mediainfo lame ffmpeg libav-tools > /dev/null
+sudo apt-get install -y unrar p7zip-full mediainfo lame ffmpeg > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
