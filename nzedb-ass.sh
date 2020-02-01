@@ -74,7 +74,7 @@ echo -e "[DONE!]"
 # Installing Basic Software
 echo -e "$YELLOW"
 echo -e "---> [Installing Basic Software...]""$BLACK"
-sudo apt-get install -y ca-certificates nano curl git htop man software-properties-common par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop ruby ruby-dev rubygems build-essential > /dev/null
+sudo apt-get install -y ca-certificates nano curl git htop man software-properties-common par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop > /dev/null
 sudo python3 -m easy_install pip > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -115,7 +115,7 @@ echo -e "[DONE!]"
 # Installing PHP 7.2
 echo -e "$YELLOW"
 echo -e "---> [Installing PHP & Extensions...]""$BLACK"
-sudo apt-get install -y libpcre3-dev php7.2-fpm php7.2-dev php-pear php7.2-gd php7.2-mysql php7.2-curl php7.2-common  php7.2-json php7.2-cli libapache2-mod-php7.2 > /dev/null
+sudo apt-get install -y libpcre3-dev php7.2-fpm php7.2-dev php-pear php7.2-gd php7.2-mysql php7.2-curl php7.2-common  php7.2-json php7.2-cli > /dev/null
 sudo a2enmod php7.2 > /dev/null
 sudo systemctl restart apache2 > /dev/null
 echo -e "$GREEN"
