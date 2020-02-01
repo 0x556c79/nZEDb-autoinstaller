@@ -196,18 +196,18 @@ echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Installing MySQL...]""$BLACK"
 sudo apt-get install -y software-properties-common > /dev/null
-sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/mariadb/repo/10.4/ubuntu bionic main'
-sudo apt update -y
+sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'  > /dev/null
+sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/mariadb/repo/10.4/ubuntu bionic main'  > /dev/null
+sudo apt update -y > /dev/null
 sudo apt install -y mariadb-server mariadb-client > /dev/null
-sudo systemctl start mysql
 sudo rm /etc/systemd/system/mysql.service || true
 echo -e "$GREEN"
 echo -e "[OK!]"
 sudo rm /etc/systemd/system/mysqld.service || true
 echo -e "$GREEN"
 echo -e "[OK!]"
-sudo systemctl enable mysql
+sudo systemctl enable mariadb
+sudo systemctl start mysql
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
