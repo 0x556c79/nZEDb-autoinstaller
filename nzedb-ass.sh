@@ -74,7 +74,7 @@ echo -e "[DONE!]"
 # Installing Basic Software
 echo -e "$YELLOW"
 echo -e "---> [Installing Basic Software...]""$BLACK"
-sudo apt-get install -y nano curl git htop man software-properties-common par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop ruby ruby-dev rubygems build-essential > /dev/null
+sudo apt-get install -y ca-certificates nano curl git htop man software-properties-common par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop ruby ruby-dev rubygems build-essential > /dev/null
 sudo python3 -m easy_install pip > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -82,7 +82,7 @@ echo -e "[DONE!]"
 # Installing Extra Software like mediainfo
 echo -e "$YELLOW"
 echo -e "---> [Install ffmpeg, mediainfo, p7zip-full, unrar and lame...]""$BLACK"
-sudo apt-get install -y unrar p7zip-full mediainfo lame ffmpeg > /dev/null
+sudo apt-get install -y unrar-free p7zip-full mediainfo lame ffmpeg > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -94,29 +94,30 @@ python -m easy_install pip  && \
 pip install cymysql && \
 pip install pynntp && \
 pip install socketpool && \
-pip list && \
-python3 -m easy_install pip && \
+pip list --format=columns > /dev/null
+python3 -m easy_install pip3 && \
 pip3 install cymysql && \
 pip3 install pynntp && \
 pip3 install socketpool && \
-pip3 list > /dev/null
+pip3 list --format=columns > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 #Add PHP 7 ppa:ondrej/php
 echo -e "$YELLOW"
-echo -e "---> [Add PHP 7 Repo...]"
-echo -e "You must press -> Enter <- to confirm""$BLACK"
-sudo add-apt-repository -y ppa:ondrej/php
-sudo apt-add-repository -y multiverse
-sudo apt-get update -y
+echo -e "---> [Add PHP 7 Repo...]""$BLACK"
+sudo add-apt-repository -y ppa:ondrej/php > /dev/null
+sudo apt-add-repository -y multiverse > /dev/null
+sudo apt-get update -y > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Installing PHP 7.2
 echo -e "$YELLOW"
 echo -e "---> [Installing PHP & Extensions...]""$BLACK"
-sudo apt-get install -y libpcre3-dev php7.2-fpm php7.2-dev php-pear php7.2-gd php7.2-mysql php7.2-curl php7.2-common  php7.2-json php7.2-cli > /dev/null
+sudo apt-get install -y libpcre3-dev php7.2-fpm php7.2-dev php-pear php7.2-gd php7.2-mysql php7.2-curl php7.2-common  php7.2-json php7.2-cli libapache2-mod-php7.2 > /dev/null
+sudo a2enmod php7.2 > /dev/null
+sudo systemctl restart apache2 > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -137,32 +138,32 @@ echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Installing FPM
-echo -e "$YELLOW"
-echo -e "---> [Installing FPM...]""$BLACK"
-gem install --no-document fpm
-fpm --version
-echo -e "$GREEN"
-echo -e "[DONE!]"
+#echo -e "$YELLOW"
+#echo -e "---> [Installing FPM...]""$BLACK"
+#gem install --no-document fpm
+#fpm --version
+#echo -e "$GREEN"
+#echo -e "[DONE!]"
 
 # Install yEnc decoder extension for PHP 7
-echo -e "$YELLOW"
-echo -e "---> [Installing yEnc decoder extension for PHP7...]""$BLACK"
-conf=$(php -i | grep -o "Scan this dir for additional .ini files => \S*" | cut -d\  -f9)
-major=$(php -r "echo PHP_VERSION;" | cut -d. -f1)
-minor=$(php -r "echo PHP_VERSION;" | cut -d. -f2)
-phpver="$major.$minor"
-
-fpm -s dir -t deb \
-    -n php"$phpver"-yenc -v 1.3.0 \
-    --depends "php${phpver}" \
-    --description "php-yenc extension build for PHP ${phpver}" \
-    --url 'https://github.com/niel/php-yenc' \
-    --after-install=post-install.sh \
-     /etc/php/"$phpver"/mods-available/yenc.ini \
-     "$conf"/20-yenc.ini \
-     "$(php-config  --extension-dir)"/yenc.so
-echo -e "$GREEN"
-echo -e "[DONE!]"
+#echo -e "$YELLOW"
+#echo -e "---> [Installing yEnc decoder extension for PHP7...]""$BLACK"
+#conf=$(php -i | grep -o "Scan this dir for additional .ini files => \S*" | cut -d\  -f9)
+#major=$(php -r "echo PHP_VERSION;" | cut -d. -f1)
+#minor=$(php -r "echo PHP_VERSION;" | cut -d. -f2)
+#phpver="$major.$minor"
+#
+#fpm -s dir -t deb \
+#    -n php"$phpver"-yenc -v 1.3.0 \
+#    --depends "php${phpver}" \
+#    --description "php-yenc extension build for PHP ${phpver}" \
+#    --url 'https://github.com/niel/php-yenc' \
+#    --after-install=post-install.sh \
+#     /etc/php/"$phpver"/mods-available/yenc.ini \
+#     "$conf"/20-yenc.ini \
+#     "$(php-config  --extension-dir)"/yenc.so
+#echo -e "$GREEN"
+#echo -e "[DONE!]"
 
 # Installing Composer for nZEDb
 echo -e "$YELLOW"
