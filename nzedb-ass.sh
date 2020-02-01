@@ -12,9 +12,6 @@ BLACK='\033[0m'
 CYAN='\e[96m'
 GREEN='\e[92m'
 
-# Variables
-GROUP=www-data
-
 # stay safe
 set -euo pipefail
 
@@ -68,7 +65,7 @@ function CHECK_NZEDB_USER {
 	else
 		sudo useradd -r -s /bin/false "$usernamenzb"
 		sudo usermod -aG www-data "$usernamenzb"
-	fi	
+	fi
 }
 echo -e "$GREEN"
 echo -e "[DONE!]"
