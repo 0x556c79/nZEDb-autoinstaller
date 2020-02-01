@@ -82,7 +82,7 @@ echo -e "[DONE!]"
 # Installing Extra Software like mediainfo
 echo -e "$YELLOW"
 echo -e "---> [Install ffmpeg, mediainfo, p7zip-full, unrar and lame...]""$BLACK"
-sudo apt-get install -y unrar-free p7zip-full mediainfo lame ffmpeg > /dev/null
+sudo apt-get install -y unrar unrar-free p7zip-full mediainfo lame ffmpeg > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -168,10 +168,10 @@ echo -e "[DONE!]"
 # Installing Composer for nZEDb
 echo -e "$YELLOW"
 echo -e "---> [Install Composer...]""$BLACK"
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" > /dev/null
-php -r "if (hash_file('SHA384', 'composer-setup.php') === 'e115a8dc7871f15d853148a7fbac7da27d6c0030b848d9b3dc09e2a0388afed865e6a3d6b3c0fad45c48e2b5fc1196ae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" > /dev/null
-sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer > /dev/null
-php -r "unlink('composer-setup.php');" > /dev/null
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === 'c5b9b6d368201a9db6f74e2611495f369991b72d9c8cbd3ffbc63edff210eb73d46ffbfce88669ad33695ef77dc76976') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
 composer -V
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -302,20 +302,20 @@ read -r -p "Set Servername (eg. yourindex.com):" servername
 sed -i "s/\bFQDN\b/$servername/g" /etc/apache2/sites-available/nZEDb.conf
 echo -e "$CYAN"
 echo -e "---> [Create SSL-Certificate and Key file...]""$BLACK"
-sudo touch /etc/ssl/certs/"$servername".pem
-sudo touch /etc/ssl/private/"$servername".key
+sudo touch /etc/ssl/certs/"$servername".pem > /dev/null
+sudo touch /etc/ssl/private/"$servername".key > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Disable Apache 2 default site...]""$BLACK"
-sudo a2dissite 000-default
+sudo a2dissite 000-default > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Enable nZEDb site config...]""$BLACK"
-sudo a2ensite nZEDb.conf
+sudo a2ensite nZEDb.conf > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Enable ModRewite...]""$BLACK"
-sudo a2enmod rewrite
+sudo a2enmod rewrite > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Restart Apache 2...]""$BLACK"
-sudo service apache2 restart
+sudo service apache2 restart > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -329,26 +329,30 @@ echo -e "[DONE!]"
 # Install nZEDb
 echo -e "$YELLOW"
 echo -e "---> [nZEDb install...]""$BLACK"
+sudo mkdir /var/www/nZEDb/ > /dev/null
+sudo chown www-data:www-data /var/www/nZEDb -R > /dev/null
+sudo chmod g+w /var/www/nZEDb/ -R > /dev/null
+sudo apt install php-imagick php-pear php7.2-curl php7.2-gd php7.2-json php7.2-dev php7.2-gd php7.2-mbstring php7.2-xml curl -y > /dev/null
 cd /var/www
-composer create-project --no-dev --keep-vcs --prefer-source nzedb/nzedb nzedb
+php composer create-project --no-dev --keep-vcs --prefer-source nzedb/nzedb nZEDb
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Fixing Permissions
 echo -e "$YELLOW"
 echo -e "---> [nZEDb install...]""$BLACK"
-sudo chmod -R 755 /var/www/nZEDb/app/libraries
-sudo chmod -R 755 /var/www/nZEDb/libraries
-sudo chmod -R 777 /var/www/nZEDb/resources
-sudo chmod -R 777 /var/www/nZEDb/www
-sudo chgrp www-data nzedb
-sudo chmod -R 777 /var/www/nzedb
-sudo chgrp www-data /var/www/nzedb/resources/smarty/templates_c
-sudo chgrp -R www-data /var/www/nzedb/resources/covers
-sudo chgrp www-data /var/www/nzedb/www
-sudo chgrp www-data /var/www/nzedb/www/install
-sudo chgrp -R www-data /var/www/nzedb/resources/nzb
-sudo chown -R www-data:www-data /var/lib/php/sessions/
+sudo chmod -R 755 /var/www/nZEDb/app/libraries > /dev/null
+sudo chmod -R 755 /var/www/nZEDb/libraries > /dev/null
+sudo chmod -R 777 /var/www/nZEDb/resources > /dev/null
+sudo chmod -R 777 /var/www/nZEDb/www > /dev/null
+sudo chgrp www-data nZEDb > /dev/null
+sudo chmod -R 777 /var/www/nZEDb > /dev/null
+sudo chgrp www-data /var/www/nZEDb/resources/smarty/templates_c > /dev/null
+sudo chgrp -R www-data /var/www/nZEDb/resources/covers > /dev/null
+sudo chgrp www-data /var/www/nZEDb/www > /dev/null
+sudo chgrp www-data /var/www/nZEDb/www/install > /dev/null
+sudo chgrp -R www-data /var/www/nZEDb/resources/nzb > /dev/null
+sudo chown -R www-data:www-data /var/lib/php/sessions/ > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -379,12 +383,12 @@ read -r -p "Press [Enter] to continue..."
 # Import Daily Dumps
 echo -e "$YELLOW"
 echo -e "---> [Importing Daily Dumps...]""$BLACK"
-sudo chmod 777 /var/www/nzedb/resources
-sudo chown -R "$usernamenzb":www-data /var/www/nzedb/cli
+sudo chmod 777 /var/www/nZEDb/resources
+sudo chown -R "$usernamenzb":www-data /var/www/nZEDb/cli
 echo
 echo -e "$RED""PLEASE BE PATIENT!  THIS   + M A Y +   TAKE A LONG TIME!""$BLACK"
 echo
-sudo php /var/www/nzedb/cli/data/predb_import_daily_batch.php 0 local true
+sudo php /var/www/nZEDb/cli/data/predb_import_daily_batch.php 0 local true
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -405,7 +409,7 @@ echo -e "[DONE!]"
 
 echo -e "$YELLOW"
 echo -e "---> [Configuring TMUX To Run On Startup...]""$BLACK"
-(crontab -l 2>/dev/null; echo "@reboot /bin/sleep 10; /usr/bin/php /var/www/nzedb/misc/update/nix/tmux/start.php") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot /bin/sleep 10; /usr/bin/php /var/www/nZEDb/misc/update/nix/tmux/start.php") | crontab -
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
