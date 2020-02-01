@@ -350,7 +350,7 @@ sudo chown www-data:www-data /var/www/nZEDb -R > /dev/null
 sudo chmod g+w /var/www/nZEDb/ -R > /dev/null
 sudo apt install php-imagick php-pear php7.2-curl php7.2-gd php7.2-json php7.2-dev php7.2-gd php7.2-mbstring php7.2-xml curl -y > /dev/null
 cd /var/www
-php composer create-project --no-dev --keep-vcs --prefer-source nzedb/nzedb nZEDb
+composer create-project --no-dev --keep-vcs --prefer-source nzedb/nzedb nZEDb
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
