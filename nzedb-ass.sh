@@ -181,13 +181,12 @@ if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]
 then
     >&2 echo 'ERROR: Invalid installer signature'
     rm composer-setup.php
-    exit 1
 fi
 
 php composer-setup.php --quiet
 RESULT=$?
 rm composer-setup.php
-exit $RESULT
+echo -e "$RESULT"
 sudo mv composer.phar /usr/local/bin/composer
 composer -V
 echo -e "$GREEN"
