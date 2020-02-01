@@ -90,15 +90,15 @@ echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Installing Python 3 and Modules...]""$BLACK"
 sudo apt-get install -y python-setuptools python-dev software-properties-common python3-setuptools python3-pip python-pip && \
-python -m easy_install pip  && \
-pip install cymysql && \
-pip install pynntp && \
-pip install socketpool && \
+python -m easy_install pip > /dev/null && \
+pip install cymysql > /dev/null && \
+pip install pynntp > /dev/null && \
+pip install socketpool > /dev/null && \
 pip list --format=columns > /dev/null
-python3 -m easy_install pip3 && \
-pip3 install cymysql && \
-pip3 install pynntp && \
-pip3 install socketpool && \
+python3 -m easy_install pip && \
+pip3 install cymysql > /dev/null && \
+pip3 install pynntp > /dev/null && \
+pip3 install socketpool > /dev/null && \
 pip3 list --format=columns > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
