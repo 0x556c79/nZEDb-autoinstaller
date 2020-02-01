@@ -48,7 +48,7 @@ function CHECK_ROOT {
 #User for nZEDb
 echo -e $YELLOW
 echo -e "---> [For safety reasons, we create a separate user...]"$BLACK
-read -p "User Account Name (eg.'nzedb'):" usernamenzb
+read -p "User Account Name (eg. nzedb):" usernamenzb
 sudo useradd -r -s /bin/false $usernamenzb
 sudo usermod -aG www-data $usernamenzb
 echo -e $GREEN
