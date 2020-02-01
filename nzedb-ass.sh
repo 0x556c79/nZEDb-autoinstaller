@@ -12,6 +12,9 @@ BLACK='\033[0m'
 CYAN='\e[96m'
 GREEN='\e[92m'
 
+# Variables
+GROUP=www-data
+
 # stay safe
 set -euo pipefail
 
@@ -57,8 +60,16 @@ function CHECK_ROOT {
 echo -e "$YELLOW"
 echo -e "---> [For safety reasons, we create a separate user...]""$BLACK"
 read -r -p "User Account Name (eg. nzedb):" usernamenzb
-sudo useradd -r -s /bin/false "$usernamenzb" || true
-sudo usermod -aG www-data "$usernamenzb" || true
+function CHECK_NZEDB_USER {
+	if [ "$(id -u "$usernamenzb")" != "0" ]; then
+		if [ "$(id -nG "$usernamenzb" | grep -qw www-data)" != "0" ]; then
+		echo -e "$GREEN" "$usernamenzb alredy in the right groups..." 1>&2
+		fi
+	else
+		sudo useradd -r -s /bin/false "$usernamenzb"
+		sudo usermod -aG www-data "$usernamenzb"
+	fi	
+}
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
