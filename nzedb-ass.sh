@@ -57,20 +57,10 @@ function CHECK_ROOT {
 echo -e "$YELLOW"
 echo -e "---> [For safety reasons, we create a separate user...]""$BLACK"
 read -r -p "User Account Name (eg. nzedb):" usernamenzb
-USERID="$(id -u "$usernamenzb")"
-function CHECK_NZEDB_USER {
-	if [ "$(id -u "$usernamenzb")" = "$USERID" ] && [ "$(id -nG "$usernamenzb" | grep -qw "www-data")" ];
-	then
-		echo -e "$GREEN" "$usernamenzb alredy exsists and is in the right groups..."
-	elif [ "$(sudo useradd -r -s /bin/false "$usernamenzb")" ] && [ "$(sudo usermod -aG www-data "$usernamenzb")" ];
-	then
-		echo -e "$YELLOW"
-		echo -e "---> [ Creating user and add to www-data group]""$BLACK"
-	else
-		sudo useradd -r -s /bin/false "$usernamenzb"
-		sudo usermod -aG www-data "$usernamenzb"
-	fi
-}
+echo -e "$YELLOW"
+echo -e "---> [ Creating user and add to www-data group]""$BLACK"
+sudo useradd -r -s /bin/false "$usernamenzb"
+sudo usermod -aG www-data "$usernamenzb"
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
