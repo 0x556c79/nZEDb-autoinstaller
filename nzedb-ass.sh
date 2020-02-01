@@ -74,7 +74,7 @@ echo -e "[DONE!]"
 # Installing Basic Software
 echo -e "$YELLOW"
 echo -e "---> [Installing Basic Software...]""$BLACK"
-sudo apt-get install -y nano curl git htop man software-properties-common par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop > /dev/null
+sudo apt-get install -y nano curl git htop man software-properties-common par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop ruby ruby-dev rubygems build-essential > /dev/null
 sudo python3 -m easy_install pip > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -91,9 +91,9 @@ echo -e "$YELLOW"
 echo -e "---> [Installing Python 3 and Modules...]""$BLACK"
 sudo apt-get install -y python-setuptools python-dev software-properties-common python3-setuptools python3-pip python-pip && \
 python -m easy_install pip  && \
-easy_install cymysql && \
-easy_install pynntp && \
-easy_install socketpool && \
+pip install cymysql && \
+pip install pynntp && \
+pip install socketpool && \
 pip list && \
 python3 -m easy_install pip && \
 pip3 install cymysql && \
@@ -136,9 +136,17 @@ sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.2/fpm/php.ini
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
+# Installing FPM
+echo -e "$YELLOW"
+echo -e "---> [Installing FPM...]""$BLACK"
+gem install --no-document fpm
+fpm --version
+echo -e "$GREEN"
+echo -e "[DONE!]"
+
 # Install yEnc decoder extension for PHP 7
 echo -e "$YELLOW"
-echo -e "---> [Install yEnc decoder extension for PHP7...]""$BLACK"
+echo -e "---> [Installing yEnc decoder extension for PHP7...]""$BLACK"
 conf=$(php -i | grep -o "Scan this dir for additional .ini files => \S*" | cut -d\  -f9)
 major=$(php -r "echo PHP_VERSION;" | cut -d. -f1)
 minor=$(php -r "echo PHP_VERSION;" | cut -d. -f2)
