@@ -95,7 +95,7 @@ pip install cymysql > /dev/null && \
 pip install pynntp > /dev/null && \
 pip install socketpool > /dev/null && \
 pip list --format=columns > /dev/null
-python3 -m easy_install pip && \
+python3 -m easy_install pip > /dev/null && \
 pip3 install cymysql > /dev/null && \
 pip3 install pynntp > /dev/null && \
 pip3 install socketpool > /dev/null && \
@@ -166,10 +166,27 @@ echo -e "[DONE!]"
 # Installing Composer for nZEDb
 echo -e "$YELLOW"
 echo -e "---> [Install Composer...]""$BLACK"
+#php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+#php -r "if (hash_file('sha384', 'composer-setup.php') === 'c5b9b6d368201a9db6f74e2611495f369991b72d9c8cbd3ffbc63edff210eb73d46ffbfce88669ad33695ef77dc76976') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+#php composer-setup.php
+#php -r "unlink('composer-setup.php');"
+#composer -V
+EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php -r "if (hash_file('sha384', 'composer-setup.php') === 'c5b9b6d368201a9db6f74e2611495f369991b72d9c8cbd3ffbc63edff210eb73d46ffbfce88669ad33695ef77dc76976') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-php composer-setup.php
-php -r "unlink('composer-setup.php');"
+ACTUAL_SIGNATURE="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
+
+if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]
+then
+    >&2 echo 'ERROR: Invalid installer signature'
+    rm composer-setup.php
+    exit 1
+fi
+
+php composer-setup.php --quiet
+RESULT=$?
+rm composer-setup.php
+exit $RESULT
+sudo mv composer.phar /usr/local/bin/composer
 composer -V
 echo -e "$GREEN"
 echo -e "[DONE!]"
