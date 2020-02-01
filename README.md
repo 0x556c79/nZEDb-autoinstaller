@@ -13,7 +13,7 @@ The idea and the source comes from [@PREngineer](https://github.com/PREngineer) 
 * Install Basic Software (curl, nano, htop, etc)
 * Install Python 3 & PIP
 * Install ffmpeg, mediainfo, p7zip-full, unrar and lame
-* Install yEnc from Source
+~~* Install yEnc from Source~~
 * Install Composer
 * Install PHP 7.2 & Extensions
   * Set the right Config for nZEDb to the php.ini
