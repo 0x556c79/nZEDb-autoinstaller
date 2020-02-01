@@ -12,7 +12,9 @@ BLACK='\033[0m'
 CYAN='\e[96m'
 GREEN='\e[92m'
 
-# Variables
+# 
+set -e
+set -o pipefail
 
 # Make sure to clear the Terminal
 clear
@@ -50,7 +52,7 @@ read -r -p "User Account Name (eg. nzedb):" usernamenzb
 sudo useradd -r -s /bin/false "$usernamenzb"
 sudo usermod -aG www-data "$usernamenzb"
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Updating System
 echo -e "$YELLOW"
@@ -59,7 +61,7 @@ sudo apt-get update > /dev/null
 sudo apt-get -y upgrade > /dev/null
 sudo apt-get -y dist-upgrade > /dev/null
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Installing Basic Software
 echo -e "$YELLOW"
@@ -67,14 +69,14 @@ echo -e "---> [Installing Basic Software...]""$BLACK"
 sudo apt-get install -y nano curl git htop man software-properties-common par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop > /dev/null
 sudo python3 -m easy_install pip > /dev/null
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Installing Extra Software like mediainfo
 echo -e "$YELLOW"
 echo -e "---> [Install ffmpeg, mediainfo, p7zip-full, unrar and lame...]""$BLACK"
 sudo apt-get install -y unrar p7zip-full mediainfo lame ffmpeg libav-tools > /dev/null
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Installing Python 3 and some modules
 echo -e "$YELLOW"
@@ -91,18 +93,7 @@ pip3 install pynntp && \
 pip3 install socketpool && \
 pip3 list > /dev/null
 echo -e "$GREEN"
-echo -e "DONE!"
-
-# Installing Composer for nZEDb
-echo -e "$YELLOW"
-echo -e "---> [Install Composer...]""$BLACK"
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" > /dev/null
-php -r "if (hash_file('SHA384', 'composer-setup.php') === 'e115a8dc7871f15d853148a7fbac7da27d6c0030b848d9b3dc09e2a0388afed865e6a3d6b3c0fad45c48e2b5fc1196ae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" > /dev/null
-sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer > /dev/null
-php -r "unlink('composer-setup.php');" > /dev/null
-composer -V
-echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 #Add PHP 7 ppa:ondrej/php
 echo -e "$YELLOW"
@@ -112,14 +103,14 @@ sudo add-apt-repository -y ppa:ondrej/php
 sudo apt-add-repository -y multiverse
 sudo apt-get update -y
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Installing PHP 7.2
 echo -e "$YELLOW"
 echo -e "---> [Installing PHP & Extensions...]""$BLACK"
 sudo apt-get install -y libpcre3-dev php7.2-fpm php7.2-dev php-pear php7.2-gd php7.2-mysql php7.2-curl php7.2-common  php7.2-json php7.2-cli > /dev/null
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Configure PHP 7.2
 echo -e "$YELLOW"
@@ -135,7 +126,7 @@ sed -ri 's/(upload_max_filesize =) ([0-9]+)/\1 100/' /etc/php/7.2/fpm/php.ini
 sed -ri 's/(post_max_size =) ([0-9]+)/\1 150/' /etc/php/7.2/fpm/php.ini
 sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.2/fpm/php.ini
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Install yEnc decoder extension for PHP 7
 echo -e "$YELLOW"
@@ -155,29 +146,44 @@ fpm -s dir -t deb \
      "$conf"/20-yenc.ini \
      "$(php-config  --extension-dir)"/yenc.so
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
+
+# Installing Composer for nZEDb
+echo -e "$YELLOW"
+echo -e "---> [Install Composer...]""$BLACK"
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" > /dev/null
+php -r "if (hash_file('SHA384', 'composer-setup.php') === 'e115a8dc7871f15d853148a7fbac7da27d6c0030b848d9b3dc09e2a0388afed865e6a3d6b3c0fad45c48e2b5fc1196ae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" > /dev/null
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer > /dev/null
+php -r "unlink('composer-setup.php');" > /dev/null
+composer -V
+echo -e "$GREEN"
+echo -e "[DONE!]"
 
 # Installing MariaDB 
 echo -e "$YELLOW"
 echo -e "---> [Installing MySQL...]""$BLACK"
-sudo apt-get install - y software-properties-common > /dev/null
-sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8 -y
-sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://ftp.hosteurope.de/mirror/mariadb.org/repo/10.3/ubuntu bionic main' -y
-sudo apt update
+sudo apt-get install -y software-properties-common > /dev/null
+sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/mariadb/repo/10.4/ubuntu bionic main'
+sudo apt update -y
 sudo apt install -y mariadb-server mariadb-client > /dev/null
 sudo systemctl start mysql
 sudo rm /etc/systemd/system/mysql.service
+echo -e "$GREEN"
+echo -e "[OK!]"
 sudo rm /etc/systemd/system/mysqld.service
+echo -e "$GREEN"
+echo -e "[OK!]"
 sudo systemctl enable mysql
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Configure MariaB
 echo -e "$YELLOW"
 echo -e "---> [Configure MariaB...]""$BLACK"
 cat <<EOF >> /etc/mysql/my.cnf
 ### configurations by nZEDb ####
-innodb_file_per_table = 1
+innodb_file_per_table = ON
 max_allowed_packet = 16M
 group_concat_max_len = 8192
 sql_mode = ''
@@ -187,7 +193,7 @@ innodb_checksum_algorithm           = crc32
 EOF
 sudo systemctl restart mysql
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Creating MySQl User for nZEDb
 echo -e "$YELLOW"
@@ -217,7 +223,7 @@ echo -e "$YELLOW"
 echo -e "---> [Lets secure the MySQL installation...]""$BLACK"
 mysql_secure_installation
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Install Apache 2.4
 echo -e "$YELLOW"
@@ -281,7 +287,6 @@ echo -e "$CYAN"
 echo -e "---> [Create SSL-Certificate and Key file...]""$BLACK"
 sudo touch /etc/ssl/certs/"$servername".pem
 sudo touch /etc/ssl/private/"$servername".key
-echo -e "$RED"" YOU SHOULD PROBABLY ISSUE A NEW CERTIFICATE FROM LET'S ENCRYPT OR SOMWHERE ELSE TO AVOID SSL WARNINGS IN THE BRWOSER""$BLACK"
 echo -e "$CYAN"
 echo -e "---> [Disable Apache 2 default site...]""$BLACK"
 sudo a2dissite 000-default
@@ -295,14 +300,14 @@ echo -e "$CYAN"
 echo -e "---> [Restart Apache 2...]""$BLACK"
 sudo service apache2 restart
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Install memcached
 echo -e "$YELLOW"
 echo -e "---> [Installing memcached...]""$BLACK"
 sudo apt-get install -y memcached php-memcached > /dev/null
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Install nZEDb
 echo -e "$YELLOW"
@@ -310,7 +315,7 @@ echo -e "---> [nZEDb install...]""$BLACK"
 cd /var/www
 composer create-project --no-dev --keep-vcs --prefer-source nzedb/nzedb nzedb
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Fixing Permissions
 echo -e "$YELLOW"
@@ -328,7 +333,7 @@ sudo chgrp www-data /var/www/nzedb/www/install
 sudo chgrp -R www-data /var/www/nzedb/resources/nzb
 sudo chown -R www-data:www-data /var/lib/php/sessions/
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Complete the Web Setup!
 
@@ -364,7 +369,7 @@ echo -e "$RED""PLEASE BE PATIENT!  THIS   + M A Y +   TAKE A LONG TIME!""$BLACK"
 echo
 sudo php /var/www/nzedb/cli/data/predb_import_daily_batch.php 0 local true
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 # Fixing Install TMUX
 echo -e "$YELLOW"
@@ -379,16 +384,16 @@ make -j4
 sudo make install
 make clean
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 echo -e "$YELLOW"
 echo -e "---> [Configuring TMUX To Run On Startup...]""$BLACK"
 (crontab -l 2>/dev/null; echo "@reboot /bin/sleep 10; /usr/bin/php /var/www/nzedb/misc/update/nix/tmux/start.php") | crontab -
 echo -e "$GREEN"
-echo -e "DONE!"
+echo -e "[DONE!]"
 
 echo -e "$GREEN"
-echo -e "---> WE ARE DONE!""$BLACK"
+echo -e "---> WE ARE [DONE!]""$BLACK"
 echo -e "To manually index run the files located in $BLUE misc/update_scripts""$BLACK"
 echo -e "update_binaries = to GET article headers"
 echo -e "update_releases = to CREATE releases"
@@ -401,4 +406,4 @@ echo -e "$YELLOW"
 echo -e "---> [Rebooting...]""$BLACK"
 sudo reboot now
 echo -e "$GREEN"
-echo -e "DONE!""$BLACK"
+echo -e "[DONE!]""$BLACK"
