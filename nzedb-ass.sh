@@ -208,7 +208,7 @@ read -p "Set password:" passwordmysql
 echo -e $CYAN
 echo -e "---> [Creating MySQL user 'nzedb'...]"$BLACK
 echo -e $RED "Please login with your MySQL Root password!"
-MYSQL=`which mysql`
+MYSQL='which mysql'
 Q0="CREATE USER 'nzedb'@'%' IDENTIFIED BY '$passwordmysql';"
 Q1="GRANT ALL ON *.* TO 'nzedb'@'%' IDENTIFIED BY '$passwordmysql';"
 Q2="GRANT FILE ON *.* TO 'nzedb'@'%' IDENTIFIED BY '$passwordmysql';"
