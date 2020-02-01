@@ -89,7 +89,7 @@ echo -e "[DONE!]"
 # Installing Python 3 and some modules
 echo -e "$YELLOW"
 echo -e "---> [Installing Python 3 and Modules...]""$BLACK"
-sudo apt-get install -y python-setuptools python-dev software-properties-common python3-setuptools python3-pip python-pip && \
+sudo apt-get install -y python-setuptools python-dev software-properties-common python3-setuptools python3-pip python-pip > /dev/null && \
 python -m easy_install pip > /dev/null && \
 pip install cymysql > /dev/null && \
 pip install pynntp > /dev/null && \
@@ -115,9 +115,7 @@ echo -e "[DONE!]"
 # Installing PHP 7.2
 echo -e "$YELLOW"
 echo -e "---> [Installing PHP & Extensions...]""$BLACK"
-sudo apt-get install -y libpcre3-dev php7.2-fpm php7.2-dev php-pear php7.2-gd php7.2-mysql php7.2-curl php7.2-common  php7.2-json php7.2-cli > /dev/null
-sudo a2enmod php7.2 > /dev/null
-sudo systemctl restart apache2 > /dev/null
+sudo apt-get install -y libpcre3-dev php7.2-fpm php7.2-dev php-pear php7.2-gd php7.2-mysql php7.2-curl php7.2-common php7.2-json php7.2-cli > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -246,6 +244,7 @@ echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Installing Apache 2...]""$BLACK"
 sudo apt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
+sudo systemctl restart apache2 > /dev/null
 cat <<EOF > nZEDb.conf
 <VirtualHost *:80>
     ServerName FQDN
