@@ -195,7 +195,7 @@ echo -e "[DONE!]"
 # Installing MariaDB 
 echo -e "$YELLOW"
 echo -e "---> [Adding MariaDB Repo...]""$BLACK"
-sudo apt-get install -y software-properties-common > /dev/null
+sudo apt-get install -y software-properties-common mysql-common > /dev/null
 sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'  > /dev/null
 sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/mariadb/repo/10.4/ubuntu bionic main'  > /dev/null
 sudo apt-get update -y > /dev/null
@@ -216,21 +216,15 @@ echo -e "[DONE!]"
 # Configure MariaB
 echo -e "$YELLOW"
 echo -e "---> [Configure MariaB...]""$BLACK"
-#sudo cat <<EOF >> /etc/mysql/my.cnf
-
-echo -e "$RED"
-echo -e "---> [Add the following config to /etc/mysql/my.cnf]
-echo
-echo -e "### configurations by nZEDb ####"
-echo -e "innodb_file_per_table = ON"
-echo -e "group_concat_max_len = 8192"
-echo -e "sql_mode = ''"
-echo -e "innodb_buffer_pool_dump_at_shutdown = ON"
-echo -e "innodb_buffer_pool_load_at_startup  = ON"
-echo -e "innodb_checksum_algorithm           = crc32"
-
-#EOF
-read -r -p "Press [Enter] to continue..."
+sudo cat <<EOF >> /etc/mysql/my.cnf
+### configurations by nZEDb ####
+innodb_file_per_table = ON
+group_concat_max_len = 8192
+sql_mode = ''
+innodb_buffer_pool_dump_at_shutdown = ON
+innodb_buffer_pool_load_at_startup  = ON
+innodb_checksum_algorithm           = crc32
+EOF
 sudo systemctl restart mysql 
 echo -e "$GREEN"
 echo -e "[DONE!]"
