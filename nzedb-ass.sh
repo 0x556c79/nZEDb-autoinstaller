@@ -248,7 +248,7 @@ echo -e "# WHEN FILLING THE DATABASE INFORMATION IN NZEDB#"
 echo -e "# USE '0.0.0.0' as the hostname!                #"
 echo -e "#                                               #"
 echo -e "# MySQL User: nzedb                             #"
-echo -e "# MySQL Pass: $passwordmysql                    #"
+echo -e "# MySQL Pass: $passwordmysql  #"
 echo -e "#                                               #"
 echo -e "# Safe this login details for install nzedb     #"
 echo -e "-------------------------------------------------""$BLACK"
@@ -265,8 +265,9 @@ sudo apt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
 echo -e "$YELLOW"
 echo -e "---> [Configure Apache 2...]""$BLACK"
 sudo apachectl stop > /dev/null
-sudo a2dismod mpm_prefork > /dev/null
 sudo a2dismod php7.2 > /dev/null
+sudo a2dismod mpm_prefork > /dev/null
+sudo a2enmod rewrite > /dev/null
 sudo a2enmod proxy_fcgi setenvif > /dev/null
 sudo a2enmod mpm_event > /dev/null
 sudo a2enconf php7.2-fpm > /dev/null
@@ -421,8 +422,8 @@ echo -e "[DONE!]"
 # Fixing Install TMUX
 echo -e "$YELLOW"
 echo -e "---> [Installing TMUX...]""$BLACK"
-sudo apt install libevent-dev git autotools-dev automake pkg-config ncurses-dev python -y > /dev/null
-sudo apt remove tmux -y > /dev/null
+sudo apt-get install libevent-dev git autotools-dev automake pkg-config ncurses-dev python -y > /dev/null
+sudo apt-get remove tmux -y > /dev/null
 git clone https://github.com/tmux/tmux.git --branch 2.0 --single-branch
 cd tmux
 ./autogen.sh
