@@ -201,6 +201,7 @@ sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/m
 sudo apt-get update -y > /dev/null
 echo -e "$YELLOW"
 echo -e "---> [Installing MariaDB...]""$BLACK"
+sudo apt-get install --reinstall mysql-common > /dev/null
 sudo apt-get install -y mariadb-server mariadb-client > /dev/null
 sudo rm /etc/systemd/system/mysql.service > /dev/null || true
 sudo rm /etc/systemd/system/mysqld.service > /dev/null || true
