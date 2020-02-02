@@ -216,7 +216,7 @@ echo -e "[DONE!]"
 # Configure MariaB
 echo -e "$YELLOW"
 echo -e "---> [Configure MariaB...]""$BLACK"
-cat <<EOF >> /etc/mysql/my.cnf
+sudo cat <<EOF >> /etc/mysql/my.cnf
 ### configurations by nZEDb ####
 innodb_file_per_table = ON
 group_concat_max_len = 8192
@@ -225,7 +225,7 @@ innodb_buffer_pool_dump_at_shutdown = ON
 innodb_buffer_pool_load_at_startup  = ON
 innodb_checksum_algorithm           = crc32
 EOF
-sudo systemctl restart 
+sudo systemctl restart mysql 
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
