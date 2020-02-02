@@ -194,20 +194,22 @@ echo -e "[DONE!]"
 
 # Installing MariaDB 
 echo -e "$YELLOW"
-echo -e "---> [Installing MySQL...]""$BLACK"
+echo -e "---> [Adding MariaDB Repo...]""$BLACK"
 sudo apt-get install -y software-properties-common > /dev/null
 sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'  > /dev/null
 sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/mariadb/repo/10.4/ubuntu bionic main'  > /dev/null
 sudo apt-get update -y > /dev/null
+echo -e "$YELLOW"
+echo -e "---> [Installing MariaDB...]""$BLACK"
 sudo apt-get install -y mariadb-server mariadb-client > /dev/null
 sudo rm /etc/systemd/system/mysql.service || true
-echo -e "$GREEN"
-echo -e "[OK!]"
 sudo rm /etc/systemd/system/mysqld.service || true
+sudo systemctl enable mariadb > /dev/null
 echo -e "$GREEN"
-echo -e "[OK!]"
-sudo systemctl enable mariadb
-sudo systemctl start mysql
+echo -e "[DONE!]"
+echo -e "$YELLOW"
+echo -e "---> [Starting MariaDB...]""$BLACK"
+sudo systemctl start mysql 
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -223,7 +225,7 @@ innodb_buffer_pool_dump_at_shutdown = ON
 innodb_buffer_pool_load_at_startup  = ON
 innodb_checksum_algorithm           = crc32
 EOF
-sudo systemctl restart mysql
+sudo systemctl restart 
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -233,14 +235,13 @@ echo -e "---> [Set password for MySQL user 'nzedb'...]""$BLACK"
 read -r -p "Set password:" passwordmysql
 echo -e "$CYAN"
 echo -e "---> [Creating MySQL user 'nzedb'...]""$BLACK"
-echo -e "$RED" "Please login with your MySQL Root password!"
-MYSQL='which mysql'
+#echo -e "$RED" "Please login with your MySQL Root password!"
 Q0="CREATE USER 'nzedb'@'%' IDENTIFIED BY '$passwordmysql';"
 Q1="GRANT ALL ON *.* TO 'nzedb'@'%' IDENTIFIED BY '$passwordmysql';"
 Q2="GRANT FILE ON *.* TO 'nzedb'@'%' IDENTIFIED BY '$passwordmysql';"
 Q3="FLUSH PRIVILEGES;"
 SQL="${Q0}${Q1}${Q2}${Q3}"
-$MYSQL -uroot -p -e "$SQL"
+mysql -e "$SQL"
 echo
 echo -e "-------------------------------------------------"
 echo -e "# WHEN FILLING THE DATABASE INFORMATION IN NZEDB#"
