@@ -198,8 +198,8 @@ echo -e "---> [Installing MySQL...]""$BLACK"
 sudo apt-get install -y software-properties-common > /dev/null
 sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'  > /dev/null
 sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/mariadb/repo/10.4/ubuntu bionic main'  > /dev/null
-sudo apt update -y > /dev/null
-sudo apt install -y mariadb-server mariadb-client > /dev/null
+sudo apt-get update -y > /dev/null
+sudo apt-get install -y mariadb-server mariadb-client > /dev/null
 sudo rm /etc/systemd/system/mysql.service || true
 echo -e "$GREEN"
 echo -e "[OK!]"
@@ -217,7 +217,6 @@ echo -e "---> [Configure MariaB...]""$BLACK"
 cat <<EOF >> /etc/mysql/my.cnf
 ### configurations by nZEDb ####
 innodb_file_per_table = ON
-max_allowed_packet = 16M
 group_concat_max_len = 8192
 sql_mode = ''
 innodb_buffer_pool_dump_at_shutdown = ON
