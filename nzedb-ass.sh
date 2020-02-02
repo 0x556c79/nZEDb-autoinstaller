@@ -15,6 +15,10 @@ GREEN='\e[92m'
 # stay safe
 set -euo pipefail
 
+# Change to /temp
+mkdir /tmp/nzedb
+cd /tmp/nzedb
+
 # Make sure to clear the Terminal
 clear
 
@@ -274,7 +278,7 @@ echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Installing mod_md...]""$BLACK"
 sudo apt-get install -y apache2-dev apache2-ssl-dev libcurl4-gnutls-dev libjansson-dev libtool-bin  > /dev/null
-wget https://github.com/icing/mod_md/releases/download/v2.2.6/mod_md-2.2.6.tar.gz > /dev/null &&\
+wget -q https://github.com/icing/mod_md/releases/download/v2.2.6/mod_md-2.2.6.tar.gz
 tar -xf mod_md-2.2.6.tar.gz
 cd mod_md-2.2.6 > /dev/null
 ./configure --with-apxs=/usr/bin/apxs > /dev/null
@@ -284,7 +288,7 @@ libtool --finish /usr/lib> /dev/null
 echo -e "$YELLOW"
 echo -e "---> [Configure Apache 2...]""$BLACK"
 sudo touch /etc/apache2/mods-available/md.load > /dev/null
-echo LoadModule md_module modules/mod_md.so > /etc/apache2/mods-available/md.load
+echo LoadModule md_module /usr/lib/apache2/modules/mod_md.so > /etc/apache2/mods-available/md.load
 sudo apachectl stop > /dev/null
 sudo a2dismod php7.2 > /dev/null
 sudo a2dismod mpm_prefork > /dev/null
@@ -293,7 +297,7 @@ sudo a2enmod rewrite > /dev/null
 sudo a2enmod proxy_fcgi setenvif > /dev/null
 sudo a2enmod mpm_event > /dev/null
 sudo a2enconf php7.2-fpm > /dev/null
-sudo apachectl start > /dev/null
+sudo systemctl start apache2
 echo -e "$GREEN"
 echo -e "[DONE!]"
 echo -e "$YELLOW"
