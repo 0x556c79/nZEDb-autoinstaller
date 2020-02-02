@@ -262,8 +262,18 @@ echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Installing Apache 2...]""$BLACK"
 sudo apt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
-sudo systemctl restart apache2 > /dev/null
-cat <<EOF > nZEDb.conf
+echo -e "$YELLOW"
+echo -e "---> [Configure Apache 2...]""$BLACK"
+sudo apachectl stop > /dev/null
+sudo a2dismod mpm_prefork > /dev/null
+sudo a2dismod php7.2 > /dev/null
+sudo a2enmod proxy_fcgi setenvif > /dev/null
+sudo a2enmod mpm_event > /dev/null
+sudo a2enconf php7.2-fpm > /dev/null
+sudo apachectl start > /dev/null
+echo -e "$YELLOW"
+echo -e "---> [Creatin nZEDb Apache 2 config...]""$BLACK"
+cat <<EOF >> nZEDb.conf
 <VirtualHost *:80>
     ServerName FQDN
     Redirect / https://FQDN.de
@@ -278,8 +288,8 @@ cat <<EOF > nZEDb.conf
         Alias /covers /var/www/nZEDb/resources/covers
         LogLevel warn
         ServerSignature Off
-        ErrorLog /var/log/apache2/error.log
-        CustomLog ${APACHE_LOG_DIR}/access.log combined
+        ErrorLog /var/log/apache2/error_nzedb.log
+        CustomLog /var/log/apache2/access_nzedb.log combined
 
         SSLEngine on
         SSLVerifyClient require
@@ -332,7 +342,7 @@ echo -e "---> [Enable ModRewite...]""$BLACK"
 sudo a2enmod rewrite > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Restart Apache 2...]""$BLACK"
-sudo service apache2 restart > /dev/null
+sudo systemctl restart apache2 > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
