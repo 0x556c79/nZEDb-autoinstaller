@@ -94,8 +94,8 @@ echo -e "[DONE!]"
 
 # Installing Python 3 and some modules
 echo -e "$YELLOW"
-echo -e "---> [Installing Python 3 and Modules...]""$BLACK"
-sudo apt-get install -y python-setuptools python-dev software-properties-common python3-setuptools python3-pip python-pip > /dev/null && \
+echo -e "---> [Installing Python and Modules...]""$BLACK"
+sudo apt-get install -y python python-setuptools python-dev software-properties-common python3-setuptools python3-pip python-pip > /dev/null && \
 python -m easy_install pip > /dev/null && \
 pip install cymysql > /dev/null && \
 pip install pynntp > /dev/null && \
@@ -203,18 +203,24 @@ sudo apt-get install -y software-properties-common mysql-common > /dev/null
 sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'  > /dev/null
 sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/mariadb/repo/10.4/ubuntu bionic main'  > /dev/null
 sudo apt-get update -y > /dev/null
+echo -e "$GREEN"
+echo -e "[DONE!]"
+
 echo -e "$YELLOW"
 echo -e "---> [Installing MariaDB...]""$BLACK"
 sudo apt-get install --reinstall mysql-common > /dev/null
-sudo apt-get install -y mariadb-server mariadb-client > /dev/null
+sudo apt-get install -y mariadb-server mariadb-client apparmor-utils > /dev/null
 sudo rm /etc/systemd/system/mysql.service > /dev/null || true
 sudo rm /etc/systemd/system/mysqld.service > /dev/null || true
 sudo systemctl enable mariadb > /dev/null
+sudo aa-complain /usr/sbin/mysqld > /dev/null || true
 echo -e "$GREEN"
 echo -e "[DONE!]"
+
 echo -e "$YELLOW"
 echo -e "---> [Starting MariaDB...]""$BLACK"
-sudo systemctl start mysql 
+sudo systemctl start mysql
+mysql_tzinfo_to_sql /usr/share/zoneinfo | sudo mysql -u root mysql || true
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -241,12 +247,12 @@ read -r -p "Set password:" passwordmysql
 echo -e "$CYAN"
 echo -e "---> [Creating MySQL user 'nzedb'...]""$BLACK"
 #echo -e "$RED" "Please login with your MySQL Root password!"
-Q0="CREATE USER 'nzedb'@'%' IDENTIFIED BY '$passwordmysql';"
-Q1="GRANT ALL ON *.* TO 'nzedb'@'%' IDENTIFIED BY '$passwordmysql';"
-Q2="GRANT FILE ON *.* TO 'nzedb'@'%' IDENTIFIED BY '$passwordmysql';"
+Q0="CREATE USER 'nzedb'@'localhost' IDENTIFIED BY '$passwordmysql';"
+Q1="GRANT ALL ON *.* TO 'nzedb'@'localhost' IDENTIFIED BY '$passwordmysql';"
+Q2="GRANT FILE ON *.* TO 'nzedb'@'localhost' IDENTIFIED BY '$passwordmysql';"
 Q3="FLUSH PRIVILEGES;"
 SQL="${Q0}${Q1}${Q2}${Q3}"
-mysql -e "$SQL"
+mysql -uroot -e "$SQL"
 echo
 echo -e "-------------------------------------------------"
 echo -e "# WHEN FILLING THE DATABASE INFORMATION IN NZEDB#"
@@ -275,6 +281,7 @@ echo -e "---> [Installing Apache 2...]""$BLACK"
 sudo apt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
+
 echo -e "$YELLOW"
 echo -e "---> [Installing mod_md...]""$BLACK"
 sudo apt-get install -y apache2-dev apache2-ssl-dev libcurl4-gnutls-dev libjansson-dev libtool-bin  > /dev/null
@@ -285,6 +292,9 @@ cd mod_md-2.2.6 > /dev/null
 make > /dev/null
 make install > /dev/null
 libtool --finish /usr/lib> /dev/null
+echo -e "$GREEN"
+echo -e "[DONE!]"
+
 echo -e "$YELLOW"
 echo -e "---> [Configure Apache 2...]""$BLACK"
 sudo touch /etc/apache2/mods-available/md.load > /dev/null
@@ -300,6 +310,7 @@ sudo a2enconf php7.2-fpm > /dev/null
 sudo systemctl start apache2
 echo -e "$GREEN"
 echo -e "[DONE!]"
+
 echo -e "$YELLOW"
 echo -e "---> [Creatin nZEDb Apache 2 config...]""$BLACK"
 cat <<EOF >> nZEDb.conf
@@ -347,6 +358,9 @@ MDomain FQDN
 </VirtualHost>
 EOF
 sudo mv nZEDb.conf /etc/apache2/sites-available/
+echo -e "$GREEN"
+echo -e "[DONE!]"
+
 echo -e "$CYAN"
 read -r -p "Set Servername (eg. yourindex.com):" servername
 sed -i "s/\bFQDN\b/$servername/g" /etc/apache2/sites-available/nZEDb.conf
@@ -379,10 +393,10 @@ echo -e "[DONE!]"
 # Install nZEDb
 echo -e "$YELLOW"
 echo -e "---> [nZEDb install...]""$BLACK"
-sudo mkdir /var/www/nZEDb/ > /dev/null
-sudo chown www-data:www-data /var/www/nZEDb -R > /dev/null
-sudo chmod g+w /var/www/nZEDb/ -R > /dev/null
-sudo apt install php-imagick php-pear php7.2-curl php7.2-gd php7.2-json php7.2-dev php7.2-gd php7.2-mbstring php7.2-xml curl -y > /dev/null
+sudo mkdir /var/www/nZEDb/
+sudo chown www-data:www-data /var/www/nZEDb -R
+sudo chmod g+w /var/www/nZEDb/ -R
+sudo apt-get install php-imagick php-pear php7.2-curl php7.2-gd php7.2-json php7.2-dev php7.2-gd php7.2-mbstring php7.2-xml curl -y > /dev/null
 cd /var/www
 composer create-project --no-dev --keep-vcs --prefer-source nzedb/nzedb nZEDb
 echo -e "$GREEN"
@@ -391,18 +405,18 @@ echo -e "[DONE!]"
 # Fixing Permissions
 echo -e "$YELLOW"
 echo -e "---> [nZEDb install...]""$BLACK"
-sudo chmod -R 755 /var/www/nZEDb/app/libraries > /dev/null
-sudo chmod -R 755 /var/www/nZEDb/libraries > /dev/null
-sudo chmod -R 777 /var/www/nZEDb/resources > /dev/null
-sudo chmod -R 777 /var/www/nZEDb/www > /dev/null
-sudo chgrp www-data nZEDb > /dev/null
-sudo chmod -R 777 /var/www/nZEDb > /dev/null
-sudo chgrp www-data /var/www/nZEDb/resources/smarty/templates_c > /dev/null
-sudo chgrp -R www-data /var/www/nZEDb/resources/covers > /dev/null
-sudo chgrp www-data /var/www/nZEDb/www > /dev/null
-sudo chgrp www-data /var/www/nZEDb/www/install > /dev/null
-sudo chgrp -R www-data /var/www/nZEDb/resources/nzb > /dev/null
-sudo chown -R www-data:www-data /var/lib/php/sessions/ > /dev/null
+sudo chmod -R 755 /var/www/nZEDb/app/libraries
+sudo chmod -R 755 /var/www/nZEDb/libraries
+sudo chmod -R 777 /var/www/nZEDb/resources
+sudo chmod -R 777 /var/www/nZEDb/www
+sudo chgrp www-data nZEDb
+sudo chmod -R 777 /var/www/nZEDb
+sudo chgrp www-data /var/www/nZEDb/resources/smarty/templates_c
+sudo chgrp -R www-data /var/www/nZEDb/resources/covers
+sudo chgrp www-data /var/www/nZEDb/www
+sudo chgrp www-data /var/www/nZEDb/www/install
+sudo chgrp -R www-data /var/www/nZEDb/resources/nzb
+sudo chown -R www-data:www-data /var/lib/php/sessions/
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -444,7 +458,7 @@ echo -e "[DONE!]"
 # Fixing Install TMUX
 echo -e "$YELLOW"
 echo -e "---> [Installing TMUX...]""$BLACK"
-sudo apt-get install libevent-dev git autotools-dev automake pkg-config ncurses-dev python -y > /dev/null
+sudo apt-get install libevent-dev git autotools-dev automake pkg-config ncurses-dev -y > /dev/null
 sudo apt-get remove tmux -y > /dev/null
 git clone https://github.com/tmux/tmux.git --branch 2.0 --single-branch
 cd tmux
@@ -458,7 +472,7 @@ echo -e "[DONE!]"
 
 echo -e "$YELLOW"
 echo -e "---> [Configuring TMUX To Run On Startup...]""$BLACK"
-(crontab -l 2>/dev/null; echo "@reboot /bin/sleep 10; /usr/bin/php /var/www/nZEDb/misc/update/nix/tmux/start.php") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot /bin/sleep 10; /usr/bin/php /var/www/nZEDb/misc/update/nix/tmux/start.php" | crontab -) || true
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
