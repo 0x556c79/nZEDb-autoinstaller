@@ -372,7 +372,7 @@ echo -e "[DONE!]"
 # Install memcached
 echo -e "$YELLOW"
 echo -e "---> [Installing memcached...]""$BLACK"
-sudo apt-get install -y apt-get install php-memcache php-memcached memcached > /dev/null
+sudo apt-get install -y php-memcache php-memcached memcached > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
