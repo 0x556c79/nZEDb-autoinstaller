@@ -107,7 +107,7 @@ echo -e "[DONE!]"
 
 #Add PHP 7 ppa:ondrej/php
 echo -e "$YELLOW"
-echo -e "---> [Add PHP 7 Repo...]""$BLACK"
+echo -e "---> [Adding ondrej/php repo...]""$BLACK"
 sudo add-apt-repository -y ppa:ondrej/php > /dev/null
 sudo apt-add-repository -y multiverse > /dev/null
 sudo apt-get update -y > /dev/null
@@ -194,7 +194,7 @@ echo -e "[DONE!]"
 
 # Installing MariaDB 
 echo -e "$YELLOW"
-echo -e "---> [Adding MariaDB Repo...]""$BLACK"
+echo -e "---> [Adding MariaDB repo...]""$BLACK"
 sudo apt-get install -y software-properties-common mysql-common > /dev/null
 sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'  > /dev/null
 sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://mirror.wtnet.de/mariadb/repo/10.4/ubuntu bionic main'  > /dev/null
@@ -261,47 +261,65 @@ echo -e "[DONE!]"
 
 # Install Apache 2.4
 echo -e "$YELLOW"
+echo -e "---> [Adding ondrej/apache2 repo...]""$BLACK"
+sudo add-apt-repository -y ppa:ondrej/apache2 > /dev/null
+sudo apt-get update -y > /dev/null
+echo -e "$GREEN"
+echo -e "[DONE!]"
+echo -e "$YELLOW"
 echo -e "---> [Installing Apache 2...]""$BLACK"
 sudo apt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
+echo -e "$GREEN"
+echo -e "[DONE!]"
+echo -e "$YELLOW"
+echo -e "---> [Installing mod_md...]""$BLACK"
+sudo apt-get install -y apache2-dev apache2-ssl-dev libcurl4-gnutls-dev libjansson-dev libtool-bin libssl1.0-dev
+wget https://github.com/icing/mod_md/releases/download/v2.2.6/mod_md-2.2.6.tar.gz > /dev/null &&\
+tar -xf mod_md-2.2.6.tar.gz
+cd mod_md-2.2.6 > /dev/null
+./configure --with-apxs=/usr/bin/apxs > /dev/null
+make > /dev/null
+make install > /dev/null
+libtool --finish /usr/lib> /dev/null
 echo -e "$YELLOW"
 echo -e "---> [Configure Apache 2...]""$BLACK"
+sudo touch /etc/apache2/mods-available/md.load > /dev/null
+echo LoadModule md_module modules/mod_md.so > /etc/apache2/mods-available/md.load
 sudo apachectl stop > /dev/null
 sudo a2dismod php7.2 > /dev/null
 sudo a2dismod mpm_prefork > /dev/null
+sudo a2enmod md > /dev/null
 sudo a2enmod rewrite > /dev/null
 sudo a2enmod proxy_fcgi setenvif > /dev/null
 sudo a2enmod mpm_event > /dev/null
 sudo a2enconf php7.2-fpm > /dev/null
 sudo apachectl start > /dev/null
+echo -e "$GREEN"
+echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Creatin nZEDb Apache 2 config...]""$BLACK"
 cat <<EOF >> nZEDb.conf
+MDCertificateAgreement accepted
+MDomain FQDN
+
 <VirtualHost *:80>
     ServerName FQDN
-    Redirect / https://FQDN.de
+    DocumentRoot "/var/www/nZEDb/www"
+    Alias /covers /var/www/nZEDb/resources/covers
+    Redirect / https://FQDN
 </VirtualHost>
 
-<IfModule mod_ssl.c>
-    <VirtualHost *:443>
-        ServerAdmin webmaster@localhost
-        ServerName localhost
-        #ServerAlias somedomain # Optional
+<VirtualHost *:443>
+	ServerAdmin webmaster@FQDN
+        ServerName FQDN
+        SSLEngine on      
         DocumentRoot "/var/www/nZEDb/www"
         Alias /covers /var/www/nZEDb/resources/covers
         LogLevel warn
         ServerSignature Off
         ErrorLog /var/log/apache2/error_nzedb.log
         CustomLog /var/log/apache2/access_nzedb.log combined
-
-        SSLEngine on
-        SSLVerifyClient require
-        SSLVerifyDepth 1
-        SSLCertificateFile		/etc/ssl/certs/FQDN.pem
-        SSLCertificateKeyFile		/etc/ssl/private/FQDN.key
-        #SSLCertificateChainFile	/etc/apache2/ssl.crt/server-ca.crt
-        #SSLCACertificatePath		/etc/ssl/certs/ # For Cloudflare
-	#SSLCACertificateFile		/etc/ssl/certs/origin-pull-ca.pem # For Cloudflare
-
+  
         <FilesMatch "\.(cgi|shtml|phtml|php)$">
                 SSLOptions +StdEnvVars
         </FilesMatch>
@@ -322,8 +340,7 @@ cat <<EOF >> nZEDb.conf
                 SetHandler "proxy:unix:/run/php/php7.2-fpm.sock|fcgi://localhost/"
             </If>
         </FilesMatch>
-	</VirtualHost>
-</IfModule>
+</VirtualHost>
 EOF
 sudo mv nZEDb.conf /etc/apache2/sites-available/
 echo -e "$CYAN"
@@ -351,7 +368,7 @@ echo -e "[DONE!]"
 # Install memcached
 echo -e "$YELLOW"
 echo -e "---> [Installing memcached...]""$BLACK"
-sudo apt-get install -y memcached php-memcached > /dev/null
+sudo apt-get install -y apt-get install php-memcache php-memcached memcached > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
