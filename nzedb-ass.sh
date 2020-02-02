@@ -273,7 +273,7 @@ echo -e "$GREEN"
 echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Installing mod_md...]""$BLACK"
-sudo apt-get install -y apache2-dev apache2-ssl-dev libcurl4-gnutls-dev libjansson-dev libtool-bin libssl1.0-dev
+sudo apt-get install -y apache2-dev apache2-ssl-dev libcurl4-gnutls-dev libjansson-dev libtool-bin  > /dev/null
 wget https://github.com/icing/mod_md/releases/download/v2.2.6/mod_md-2.2.6.tar.gz > /dev/null &&\
 tar -xf mod_md-2.2.6.tar.gz
 cd mod_md-2.2.6 > /dev/null
