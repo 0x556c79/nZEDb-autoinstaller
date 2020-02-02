@@ -202,8 +202,8 @@ sudo apt-get update -y > /dev/null
 echo -e "$YELLOW"
 echo -e "---> [Installing MariaDB...]""$BLACK"
 sudo apt-get install -y mariadb-server mariadb-client > /dev/null
-sudo rm /etc/systemd/system/mysql.service || true
-sudo rm /etc/systemd/system/mysqld.service || true
+sudo rm /etc/systemd/system/mysql.service > /dev/null || true
+sudo rm /etc/systemd/system/mysqld.service > /dev/null || true
 sudo systemctl enable mariadb > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -216,15 +216,21 @@ echo -e "[DONE!]"
 # Configure MariaB
 echo -e "$YELLOW"
 echo -e "---> [Configure MariaB...]""$BLACK"
-sudo cat <<EOF >> /etc/mysql/my.cnf
-### configurations by nZEDb ####
-innodb_file_per_table = ON
-group_concat_max_len = 8192
-sql_mode = ''
-innodb_buffer_pool_dump_at_shutdown = ON
-innodb_buffer_pool_load_at_startup  = ON
-innodb_checksum_algorithm           = crc32
-EOF
+#sudo cat <<EOF >> /etc/mysql/my.cnf
+
+echo -e "$RED"
+echo -e "---> [Add the following config to /etc/mysql/my.cnf]
+echo
+echo -e "### configurations by nZEDb ####"
+echo -e "innodb_file_per_table = ON"
+echo -e "group_concat_max_len = 8192"
+echo -e "sql_mode = ''"
+echo -e "innodb_buffer_pool_dump_at_shutdown = ON"
+echo -e "innodb_buffer_pool_load_at_startup  = ON"
+echo -e "innodb_checksum_algorithm           = crc32"
+
+#EOF
+read -r -p "Press [Enter] to continue..."
 sudo systemctl restart mysql 
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -393,7 +399,6 @@ echo -e "-------------------------------------------------""$BLACK"
 
 echo -e "$RED""STOP! WARING! STOP! WARNING! STOP! WARNING!""$BLACK"
 echo -e "$RED""STOP! WARING! STOP! WARNING! STOP! WARNING!""$BLACK"
-echo -e "$RED"" YOU SHOULD PROBABLY ISSUE A NEW CERTIFICATE FROM LET'S ENCRYPT OR SOMWHERE ELSE TO AVOID SSL WARNINGS IN THE BRWOSER""$BLACK"
 
 read -r -p "Press [Enter] to continue..."
 
