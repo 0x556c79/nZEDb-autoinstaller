@@ -73,7 +73,7 @@ echo -e "[DONE!]"
 # Installing Basic Software
 echo -e "$YELLOW"
 echo -e "---> [Installing Basic Software...]""$BLACK"
-apt-get install -y ca-certificates nano curl git htop man software-properties-common python-software-properties git make par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop > /dev/null
+apt-get install -y ca-certificates nano curl git htop man software-properties-common git make par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mariadb-client-10.1 > /dev/null
 python3 -m easy_install pip > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
