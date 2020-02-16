@@ -170,16 +170,10 @@ mysql_secure_installation
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-# Install Apache 2.4
+# Install libapache2-mod-php7.2
 echo -e "$YELLOW"
-echo -e "---> [Adding ondrej/apache2 repo...]""$BLACK"
-add-apt-repository -y ppa:ondrej/apache2 > /dev/null
-apt-get update -y > /dev/null
-echo -e "$GREEN"
-echo -e "[DONE!]"
-echo -e "$YELLOW"
-echo -e "---> [Installing Apache 2...]""$BLACK"
-sapt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
+echo -e "---> [Installing libapache2-mod-php7.2...]""$BLACK"
+apt-get install -y libapache2-mod-php7.2 > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
