@@ -63,9 +63,8 @@ echo -e "[DONE!]"
 # Updating System
 echo -e "$YELLOW"
 echo -e "---> [Updating System...]""$BLACK"
+apt-get install -y apt-utils apt-transport-https > /dev/null
 apt-get update > /dev/null
-apt-get install -y apt-utils > /dev/null
-apt-get install -y apt-transport-https > /dev/null
 apt-get -y upgrade > /dev/null
 apt-get -y dist-upgrade > /dev/null
 echo -e "$GREEN"
