@@ -1,8 +1,8 @@
 #!/bin/bash
-# Script Name: nZEDb Auto Installer
+# Script Name: NNTmus Auto Installer for TurnKey-LAMP
 # Author: STX2k (2016)
 # Based on the idea from: PREngineer
-# Updated for use with PHP7 by: 0x556x79
+# Updated for use with PHP7.4 by: 0x556x79
 #############################################
 
 # Color definition variables
@@ -81,7 +81,7 @@ apt-get install -y unrar p7zip-full mediainfo lame ffmpeg libav-tools > /dev/nul
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-# Add repo for PHP 7.2
+# Add repo for PHP 7.X
 echo -e "$YELLOW"
 wget -q -O- https://packages.sury.org/php/apt.gpg | apt-key add - > /dev/null
 echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list > /dev/null
@@ -89,37 +89,43 @@ apt-get update -y > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-# Installing PHP 7.2
+# Removing PHP 7.0
 echo -e "$YELLOW"
-echo -e "---> [Installing PHP & Extensions...]""$BLACK"
-apt-get install -y libpcre3-dev php-pear php7.2 php7.2-cli php7.2-dev php7.2-common php7.2-curl php7.2-json php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml php7.2-intl php7.2-fpm php7.2-bcmath php7.2-zip php-imagick > /dev/null
+echo -e "---> [Removing PHP 7.0 & Extensions...]""$BLACK"
+apt-get autoremove -y php7.0 php7.0-* > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-# Configure PHP 7.2
+# Installing PHP 7.4
 echo -e "$YELLOW"
-echo -e "---> [Do some magic with the php7.2 config...]""$BLACK"
-sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php/7.2/cli/php.ini
-sed -ri 's/(memory_limit =) ([0-9]+)/\1 -1/' /etc/php/7.2/cli/php.ini
-sed -ri 's/(upload_max_filesize =) ([0-9]+)/\1 100/' /etc/php/7.2/cli/php.ini
-sed -ri 's/(post_max_size =) ([0-9]+)/\1 150/' /etc/php/7.2/cli/php.ini
-sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.2/cli/php.ini
-sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php/7.2/fpm/php.ini
-sed -ri 's/(memory_limit =) ([0-9]+)/\1 1024/' /etc/php/7.2/fpm/php.ini
-sed -ri 's/(upload_max_filesize =) ([0-9]+)/\1 100/' /etc/php/7.2/fpm/php.ini
-sed -ri 's/(post_max_size =) ([0-9]+)/\1 150/' /etc/php/7.2/fpm/php.ini
-sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.2/fpm/php.ini
+echo -e "---> [Installing PHP 7.4 & Extensions...]""$BLACK"
+apt-get install -y libpcre3-dev php-pear php7.4 php7.4-cli php7.4-dev php7.4-common php7.4-curl php7.4-json php7.4-gd php7.4-mysql php7.4-mbstring php7.4-xml php7.4-intl php7.4-fpm php7.4-bcmath php7.4-zip php-imagick > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
+# Configure PHP 7.4
+echo -e "$YELLOW"
+echo -e "---> [Do some magic with the php7.4 config...]""$BLACK"
+sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php/7.4/cli/php.ini
+sed -ri 's/(memory_limit =) ([0-9]+)/\1 -1/' /etc/php/7.4/cli/php.ini
+sed -ri 's/(upload_max_filesize =) ([0-9]+)/\1 100/' /etc/php/7.4/cli/php.ini
+sed -ri 's/(post_max_size =) ([0-9]+)/\1 150/' /etc/php/7.4/cli/php.ini
+sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.4/cli/php.ini
+sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php/7.4/fpm/php.ini
+sed -ri 's/(memory_limit =) ([0-9]+)/\1 1024/' /etc/php/7.4/fpm/php.ini
+sed -ri 's/(upload_max_filesize =) ([0-9]+)/\1 100/' /etc/php/7.4/fpm/php.ini
+sed -ri 's/(post_max_size =) ([0-9]+)/\1 150/' /etc/php/7.4/fpm/php.ini
+sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.4/fpm/php.ini
+echo -e "$GREEN"
+echo -e "[DONE!]"
+
+# Configure MariaB
 echo -e "$YELLOW"
 echo -e "---> [Starting MariaDB...]""$BLACK"
 systemctl start mysql
 mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql || true
 echo -e "$GREEN"
 echo -e "[DONE!]"
-
-# Configure MariaB
 echo -e "$YELLOW"
 echo -e "---> [Configure MariaB...]""$BLACK"
 cat <<EOF >> /etc/mysql/mariadb.conf.d/51-nntmux.cnf
@@ -144,7 +150,6 @@ echo -e "---> [Set password for MySQL user 'nntmux'...]""$BLACK"
 read -r -p "Set password:" passwordmysql
 echo -e "$CYAN"
 echo -e "---> [Creating MySQL user 'nntmux'...]""$BLACK"
-#echo -e "$RED" "Please login with your MySQL Root password!"
 Q0="CREATE DATABASE nntmux;"
 Q1="CREATE USER 'nntmux'@'localhost' IDENTIFIED BY '$passwordmysql';"
 Q2="GRANT ALL ON nntmux.* TO 'nntmux'@'localhost' IDENTIFIED BY '$passwordmysql';"
@@ -197,7 +202,7 @@ echo -e "---> [Configure Apache 2...]""$BLACK"
 touch /etc/apache2/mods-available/md.load > /dev/null
 echo LoadModule md_module /usr/lib/apache2/modules/mod_md.so > /etc/apache2/mods-available/md.load
 apachectl stop > /dev/null
-a2dismod php7.2 > /dev/null
+a2dismod php7.2 php7.0 > /dev/null
 a2dismod mpm_prefork > /dev/null
 a2enmod md > /dev/null
 a2enmod rewrite > /dev/null
@@ -209,7 +214,7 @@ echo -e "$GREEN"
 echo -e "[DONE!]"
 
 echo -e "$YELLOW"
-echo -e "---> [Creatin nZEDb Apache 2 config...]""$BLACK"
+echo -e "---> [Creatin NNTmux Apache 2 config...]""$BLACK"
 cat <<EOF >> NNTmux.conf
 MDCertificateAgreement accepted
 MDomain FQDN
@@ -264,7 +269,7 @@ echo -e "$CYAN"
 echo -e "---> [Disable Apache 2 default site...]""$BLACK"
 a2dissite 000-default > /dev/null
 echo -e "$CYAN"
-echo -e "---> [Enable nZEDb site config...]""$BLACK"
+echo -e "---> [Enable NNTmux site config...]""$BLACK"
 a2ensite NNTmux.conf > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Enable ModRewite...]""$BLACK"
