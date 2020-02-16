@@ -275,7 +275,7 @@ a2enmod rewrite > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Restart Apache 2...]""$BLACK"
 systemctl restart apache2 > /dev/null
-usermod -a -G www-data $USER
+usermod -a -G www-data "$USER"
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -336,22 +336,22 @@ echo -e "$YELLOW"
 echo -e "Edit /var/www/NNTmux/.env and add the following Parameters or replace them""$BLACK"
 echo -e "$RED"
 echo -e DB_USER=nntmux
-echo -e DB_PASSWORD=$passwordmysql
+echo -e DB_PASSWORD="$passwordmysql"
 echo -e DB_NAME=nntmux
-echo -e NNTP_USERNAME=$nntpuser
-echo -e NNTP_PASSWORD=$nntppass
-echo -e NNTP_SERVER=$nntpserver
+echo -e NNTP_USERNAME="$nntpuser"
+echo -e NNTP_PASSWORD="$nntppass"
+echo -e NNTP_SERVER="$nntpserver"
 echo -e NNTP_PORT=586
 echo -e NNTP_SSLENABLED=true
 echo -e NNTP_SOCKET_TIMEOUT=120
-echo -e ADMIN_USER=$adminuser
-echo -e ADMIN_PASS=$adminpw
-echo -e ADMIN_EMAIL=$adminmail
+echo -e ADMIN_USER="$adminuser"
+echo -e ADMIN_PASS="$adminpw"
+echo -e ADMIN_EMAIL="$adminmail"
 echo -e APP_ENV=production
 echo -e APP_DEBUG=false
 echo -e APP_TZ=Europe/Berlin
-echo -e APP_URL=$FQDN
-echo -e SESSION_DOMAIN=$FQDN
+echo -e APP_URL="$FQDN"
+echo -e SESSION_DOMAIN="$FQDN"
 echo -e ELASTICSEARCH_ENABLED=true"$BLACK"
 read -r -p "Press [Enter] to continue..."
 composer global require hirak/prestissimo
