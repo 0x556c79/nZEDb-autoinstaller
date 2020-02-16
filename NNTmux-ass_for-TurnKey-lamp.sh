@@ -48,7 +48,7 @@ function CHECK_ROOT {
 	fi
 }
 
-#User for nZEDb
+#User for NNTmux
 echo -e "$YELLOW"
 echo -e "---> [For safety reasons, we create a separate user...]""$BLACK"
 read -r -p "User Account Name (eg. nntmux):" usernamenzb
@@ -84,11 +84,10 @@ apt-get install -y unrar p7zip-full mediainfo lame ffmpeg libav-tools > /dev/nul
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-# Add PHP 7 ppa:ondrej/php
+# Add repo for PHP 7.2
 echo -e "$YELLOW"
-echo -e "---> [Adding ondrej/php repo...]""$BLACK"
-add-apt-repository -y ppa:ondrej/php > /dev/null
-apt-add-repository -y multiverse > /dev/null
+wget -q -O- https://packages.sury.org/php/apt.gpg | apt-key add -
+echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list
 apt-get update -y > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -96,7 +95,6 @@ echo -e "[DONE!]"
 # Installing PHP 7.2
 echo -e "$YELLOW"
 echo -e "---> [Installing PHP & Extensions...]""$BLACK"
-ln /etc/apt/sources.list.d/sources.list /etc/apt/sources.list
 apt-get install -y libpcre3-dev php-pear php7.2 php7.2-cli php7.2-dev php7.2-common php7.2-curl php7.2-json php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml php7.2-intl php7.2-fpm php7.2-bcmath php7.2-zip php-imagick > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
