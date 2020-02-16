@@ -54,48 +54,48 @@ echo -e "---> [For safety reasons, we create a separate user...]""$BLACK"
 read -r -p "User Account Name (eg. nntmux):" usernamenzb
 echo -e "$YELLOW"
 echo -e "---> [ Creating user and add to www-data group]""$BLACK"
-sudo useradd -r -s /bin/false "$usernamenzb" || true
-sudo usermod -aG www-data "$usernamenzb" || true
+useradd -r -s /bin/false "$usernamenzb" || true
+usermod -aG www-data "$usernamenzb" || true
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Updating System
 echo -e "$YELLOW"
 echo -e "---> [Updating System...]""$BLACK"
-sudo apt-get update > /dev/null
-sudo apt-get -y upgrade > /dev/null
-sudo apt-get -y dist-upgrade > /dev/null
+apt-get update > /dev/null
+apt-get -y upgrade > /dev/null
+apt-get -y dist-upgrade > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Installing Basic Software
 echo -e "$YELLOW"
 echo -e "---> [Installing Basic Software...]""$BLACK"
-sudo apt-get install -y ca-certificates nano curl git htop man software-properties-common python-software-properties git make par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop > /dev/null
-sudo python3 -m easy_install pip > /dev/null
+apt-get install -y ca-certificates nano curl git htop man software-properties-common python-software-properties git make par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop > /dev/null
+python3 -m easy_install pip > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Installing Extra Software like mediainfo
 echo -e "$YELLOW"
 echo -e "---> [Install ffmpeg, mediainfo, p7zip-full, unrar and lame...]""$BLACK"
-sudo apt-get install -y unrar p7zip-full mediainfo lame ffmpeg libav-tools > /dev/null
+apt-get install -y unrar p7zip-full mediainfo lame ffmpeg libav-tools > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 Add PHP 7 ppa:ondrej/php
 echo -e "$YELLOW"
 echo -e "---> [Adding ondrej/php repo...]""$BLACK"
-sudo add-apt-repository -y ppa:ondrej/php > /dev/null
-sudo apt-add-repository -y multiverse > /dev/null
-sudo apt-get update -y > /dev/null
+add-apt-repository -y ppa:ondrej/php > /dev/null
+apt-add-repository -y multiverse > /dev/null
+apt-get update -y > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Installing PHP 7.2
 echo -e "$YELLOW"
 echo -e "---> [Installing PHP & Extensions...]""$BLACK"
-sudo apt-get install -y libpcre3-dev php-pear php7.2 php7.2-cli php7.2-dev php7.2-common php7.2-curl php7.2-json php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml php7.2-intl php7.2-fpm php7.2-bcmath php7.2-zip php-imagick > /dev/null
+apt-get install -y libpcre3-dev php-pear php7.2 php7.2-cli php7.2-dev php7.2-common php7.2-curl php7.2-json php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml php7.2-intl php7.2-fpm php7.2-bcmath php7.2-zip php-imagick > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -117,15 +117,15 @@ echo -e "[DONE!]"
 
 echo -e "$YELLOW"
 echo -e "---> [Starting MariaDB...]""$BLACK"
-sudo systemctl start mysql
-mysql_tzinfo_to_sql /usr/share/zoneinfo | sudo mysql -u root mysql || true
+systemctl start mysql
+mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql || true
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Configure MariaB
 echo -e "$YELLOW"
 echo -e "---> [Configure MariaB...]""$BLACK"
-sudo cat <<EOF >> /etc/mysql/mariadb.conf.d/51-nntmux.cnf
+cat <<EOF >> /etc/mysql/mariadb.conf.d/51-nntmux.cnf
 [mysqld]
 innodb_file_per_table = 1
 innodb_buffer_pool_size = 256M
@@ -135,7 +135,7 @@ innodb_buffer_pool_dump_at_shutdown = ON
 innodb_buffer_pool_load_at_startup  = ON
 innodb_checksum_algorithm           = crc32
 EOF
-sudo systemctl restart mysql 
+systemctl restart mysql 
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -172,19 +172,19 @@ echo -e "[DONE!]"
 # Install Apache 2.4
 echo -e "$YELLOW"
 echo -e "---> [Adding ondrej/apache2 repo...]""$BLACK"
-sudo add-apt-repository -y ppa:ondrej/apache2 > /dev/null
-sudo apt-get update -y > /dev/null
+add-apt-repository -y ppa:ondrej/apache2 > /dev/null
+apt-get update -y > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Installing Apache 2...]""$BLACK"
-sudo apt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
+sapt-get install -y apache2 libapache2-mod-php7.2 > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 echo -e "$YELLOW"
 echo -e "---> [Installing mod_md...]""$BLACK"
-sudo apt-get install -y apache2-dev apache2-ssl-dev libcurl4-gnutls-dev libjansson-dev libtool-bin  > /dev/null
+apt-get install -y apache2-dev apache2-ssl-dev libcurl4-gnutls-dev libjansson-dev libtool-bin  > /dev/null
 wget -q https://github.com/icing/mod_md/releases/download/v2.2.6/mod_md-2.2.6.tar.gz
 tar -xf mod_md-2.2.6.tar.gz
 cd mod_md-2.2.6 > /dev/null
@@ -197,17 +197,17 @@ echo -e "[DONE!]"
 
 echo -e "$YELLOW"
 echo -e "---> [Configure Apache 2...]""$BLACK"
-sudo touch /etc/apache2/mods-available/md.load > /dev/null
+touch /etc/apache2/mods-available/md.load > /dev/null
 echo LoadModule md_module /usr/lib/apache2/modules/mod_md.so > /etc/apache2/mods-available/md.load
-sudo apachectl stop > /dev/null
-sudo a2dismod php7.2 > /dev/null
-sudo a2dismod mpm_prefork > /dev/null
-sudo a2enmod md > /dev/null
-sudo a2enmod rewrite > /dev/null
-sudo a2enmod proxy_fcgi setenvif > /dev/null
-sudo a2enmod mpm_event > /dev/null
-sudo a2enconf php7.2-fpm > /dev/null
-sudo systemctl start apache2
+apachectl stop > /dev/null
+a2dismod php7.2 > /dev/null
+a2dismod mpm_prefork > /dev/null
+a2enmod md > /dev/null
+a2enmod rewrite > /dev/null
+a2enmod proxy_fcgi setenvif > /dev/null
+a2enmod mpm_event > /dev/null
+a2enconf php7.2-fpm > /dev/null
+systemctl start apache2
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -252,7 +252,7 @@ MDomain FQDN
         </FilesMatch>
 </VirtualHost>
 EOF
-sudo mv NNTmux.conf /etc/apache2/sites-available/
+mv NNTmux.conf /etc/apache2/sites-available/
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -261,28 +261,28 @@ read -r -p "Set Servername (eg. yourindex.com):" servername
 sed -i "s/\bFQDN\b/$servername/g" /etc/apache2/sites-available/NNTmux.conf
 echo -e "$CYAN"
 echo -e "---> [Create SSL-Certificate and Key file...]""$BLACK"
-sudo touch /etc/ssl/certs/"$servername".pem > /dev/null
-sudo touch /etc/ssl/private/"$servername".key > /dev/null
+touch /etc/ssl/certs/"$servername".pem > /dev/null
+touch /etc/ssl/private/"$servername".key > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Disable Apache 2 default site...]""$BLACK"
-sudo a2dissite 000-default > /dev/null
+a2dissite 000-default > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Enable nZEDb site config...]""$BLACK"
-sudo a2ensite NNTmux.conf > /dev/null
+a2ensite NNTmux.conf > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Enable ModRewite...]""$BLACK"
-sudo a2enmod rewrite > /dev/null
+a2enmod rewrite > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Restart Apache 2...]""$BLACK"
-sudo systemctl restart apache2 > /dev/null
-sudo usermod -a -G www-data $USER
+systemctl restart apache2 > /dev/null
+usermod -a -G www-data $USER
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Install memcached
 echo -e "$YELLOW"
 echo -e "---> [Installing memcached...]""$BLACK"
-sudo apt-get install -y php-memcache php-memcached memcached > /dev/null
+apt-get install -y php-memcache php-memcached memcached > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -308,7 +308,7 @@ php composer-setup.php --quiet
 RESULT=$?
 rm composer-setup.php
 echo -e "$RESULT"
-sudo mv composer.phar /usr/local/bin/composer
+mv composer.phar /usr/local/bin/composer
 composer -V
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -362,14 +362,14 @@ echo -e "[DONE!]"
 # Fixing Permissions
 echo -e "$YELLOW"
 echo -e "---> [Fixing Permissions...]""$BLACK"
-sudo chown -R nntmux:www-data /var/www/NNTmux/bootstrap/cache/
-sudo chown -R nntmux:www-data /var/www/NNTmux/storage/logs/
-sudo chown -R nntmux:www-data /var/www/NNTmux/resources/tmp/
-sudo chown -R nntmux:www-data /var/www/NNTmux/public/
-sudo chmod -R 755 /var/www/NNTmux/vendor/
-sudo chmod -R 777 /var/www/NNTmux/storage/
-sudo chmod -R 777 /var/www/NNTmux/resources/
-sudo chmod -R 777 /var/www/NNTmux/public/
+chown -R nntmux:www-data /var/www/NNTmux/bootstrap/cache/
+chown -R nntmux:www-data /var/www/NNTmux/storage/logs/
+chown -R nntmux:www-data /var/www/NNTmux/resources/tmp/
+chown -R nntmux:www-data /var/www/NNTmux/public/
+chmod -R 755 /var/www/NNTmux/vendor/
+chmod -R 777 /var/www/NNTmux/storage/
+chmod -R 777 /var/www/NNTmux/resources/
+chmod -R 777 /var/www/NNTmux/public/
 php artisan nntmux:install
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -408,26 +408,26 @@ read -r -p "Press [Enter] to continue..."
 # Import Daily Dumps
 echo -e "$YELLOW"
 echo -e "---> [Importing Daily Dumps...]""$BLACK"
-sudo chmod 777 /var/www/NNTmux/resources
-sudo chown -R "$usernamenzb":www-data /var/www/NNTmux/cli
+chmod 777 /var/www/NNTmux/resources
+chown -R "$usernamenzb":www-data /var/www/NNTmux/cli
 echo
 echo -e "$RED""PLEASE BE PATIENT!  THIS   + M A Y +   TAKE A LONG TIME!""$BLACK"
 echo
-sudo php /var/www/NNTmux/cli/data/predb_import_daily_batch.php 0 local true
+php /var/www/NNTmux/cli/data/predb_import_daily_batch.php 0 local true
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Fixing Install TMUX
 echo -e "$YELLOW"
 echo -e "---> [Installing TMUX...]""$BLACK"
-sudo apt-get install libevent-dev git autotools-dev automake pkg-config ncurses-dev -y > /dev/null
-sudo apt-get remove tmux -y > /dev/null
+apt-get install libevent-dev git autotools-dev automake pkg-config ncurses-dev -y > /dev/null
+apt-get remove tmux -y > /dev/null
 git clone https://github.com/tmux/tmux.git --branch 2.0 --single-branch
 cd tmux
 ./autogen.sh
 ./configure
 make -j4
-sudo make install
+make install
 make clean
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -444,6 +444,6 @@ read -r -p "Press [Enter] to continue..."
 
 echo -e "$YELLOW"
 echo -e "---> [Rebooting...]""$BLACK"
-sudo reboot now
+reboot now
 echo -e "$GREEN"
 echo -e "[DONE!]""$BLACK"
