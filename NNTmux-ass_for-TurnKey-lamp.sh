@@ -84,7 +84,7 @@ apt-get install -y unrar p7zip-full mediainfo lame ffmpeg libav-tools > /dev/nul
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-Add PHP 7 ppa:ondrej/php
+# Add PHP 7 ppa:ondrej/php
 echo -e "$YELLOW"
 echo -e "---> [Adding ondrej/php repo...]""$BLACK"
 add-apt-repository -y ppa:ondrej/php > /dev/null
