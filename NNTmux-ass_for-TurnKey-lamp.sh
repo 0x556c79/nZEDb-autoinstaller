@@ -25,15 +25,6 @@ clear
 # Display the Title Information
 echo
 echo "$RED"
-echo -e "  ________________________  ___________  __     "
-echo -e " /   _____/\__    ___/\   \/  /\_____  \|  | __ "
-echo -e " \_____  \   |    |    \     /  /  ____/|  |/ / "
-echo -e " /        \  |    |    /     \ /       \|    <  "
-echo -e "/_______  /  |____|   /___/\  \\_______ \__|_ \ "
-echo -e "        \/                  \_/        \/    \/ "
-echo -e "           _  _| _ |_ _ _|  |_                  "
-echo -e "       |_||_)(_|(_||_(-(_|  |_)\/               "
-echo -e "          |                    /                "
 echo -e "   ___       _____ _____   __      ______       "
 echo -e "  / _ \     | ____| ____| / /     |____  / _ \  "
 echo -e " | | | |_  _| |__ | |__  / /___  __   / / (_) | "
@@ -41,7 +32,7 @@ echo -e " | | | \ \/ /___ \|___ \| '_ \ \/ /  / / \__, | "
 echo -e " | |_| |>  < ___) |___) | (_) >  <  / /    / /  "
 echo -e "  \___//_/\_\____/|____/ \___/_/\_\/_/    /_/   "
 echo -e "$CYAN"
-echo -e "nZEDb Auto Installer by STX2k updated by 0x556x79"
+echo -e "nZEDb Auto Installer by by 0x556x79"
 echo
 
 echo -e "$RED"' You use this Script on your own risk!'"$BLACK"
@@ -60,7 +51,7 @@ function CHECK_ROOT {
 #User for nZEDb
 echo -e "$YELLOW"
 echo -e "---> [For safety reasons, we create a separate user...]""$BLACK"
-read -r -p "User Account Name (eg. nzedb):" usernamenzb
+read -r -p "User Account Name (eg. nntmux):" usernamenzb
 echo -e "$YELLOW"
 echo -e "---> [ Creating user and add to www-data group]""$BLACK"
 sudo useradd -r -s /bin/false "$usernamenzb" || true
@@ -80,7 +71,7 @@ echo -e "[DONE!]"
 # Installing Basic Software
 echo -e "$YELLOW"
 echo -e "---> [Installing Basic Software...]""$BLACK"
-sudo apt-get install -y ca-certificates nano curl git htop man software-properties-common par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop > /dev/null
+sudo apt-get install -y ca-certificates nano curl git htop man software-properties-common python-software-properties git make par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mytop > /dev/null
 sudo python3 -m easy_install pip > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -88,18 +79,18 @@ echo -e "[DONE!]"
 # Installing Extra Software like mediainfo
 echo -e "$YELLOW"
 echo -e "---> [Install ffmpeg, mediainfo, p7zip-full, unrar and lame...]""$BLACK"
-sudo apt-get install -y unrar unrar-free p7zip-full mediainfo lame ffmpeg > /dev/null
+sudo apt-get install -y unrar p7zip-full mediainfo lame ffmpeg libav-tools > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-#Add PHP 7 ppa:ondrej/php
-#echo -e "$YELLOW"
-#echo -e "---> [Adding ondrej/php repo...]""$BLACK"
-#sudo add-apt-repository -y ppa:ondrej/php > /dev/null
-#sudo apt-add-repository -y multiverse > /dev/null
-#sudo apt-get update -y > /dev/null
-#echo -e "$GREEN"
-#echo -e "[DONE!]"
+Add PHP 7 ppa:ondrej/php
+echo -e "$YELLOW"
+echo -e "---> [Adding ondrej/php repo...]""$BLACK"
+sudo add-apt-repository -y ppa:ondrej/php > /dev/null
+sudo apt-add-repository -y multiverse > /dev/null
+sudo apt-get update -y > /dev/null
+echo -e "$GREEN"
+echo -e "[DONE!]"
 
 # Installing PHP 7.2
 echo -e "$YELLOW"
@@ -124,33 +115,6 @@ sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.2/fpm/php.ini
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-# Installing Composer for nZEDb
-echo -e "$YELLOW"
-echo -e "---> [Install Composer...]""$BLACK"
-#php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-#php -r "if (hash_file('sha384', 'composer-setup.php') === 'c5b9b6d368201a9db6f74e2611495f369991b72d9c8cbd3ffbc63edff210eb73d46ffbfce88669ad33695ef77dc76976') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-#php composer-setup.php
-#php -r "unlink('composer-setup.php');"
-#composer -V
-EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-ACTUAL_SIGNATURE="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
-
-if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]
-then
-    >&2 echo 'ERROR: Invalid installer signature'
-    rm composer-setup.php
-fi
-
-php composer-setup.php --quiet
-RESULT=$?
-rm composer-setup.php
-echo -e "$RESULT"
-sudo mv composer.phar /usr/local/bin/composer
-composer -V
-echo -e "$GREEN"
-echo -e "[DONE!]"
-
 echo -e "$YELLOW"
 echo -e "---> [Starting MariaDB...]""$BLACK"
 sudo systemctl start mysql
@@ -163,7 +127,8 @@ echo -e "$YELLOW"
 echo -e "---> [Configure MariaB...]""$BLACK"
 sudo cat <<EOF >> /etc/mysql/mariadb.conf.d/51-nntmux.cnf
 [mysqld]
-innodb_file_per_table = ON
+innodb_file_per_table = 1
+innodb_buffer_pool_size = 256M
 group_concat_max_len = 8192
 sql_mode = ''
 innodb_buffer_pool_dump_at_shutdown = ON
@@ -181,18 +146,19 @@ read -r -p "Set password:" passwordmysql
 echo -e "$CYAN"
 echo -e "---> [Creating MySQL user 'nntmux'...]""$BLACK"
 #echo -e "$RED" "Please login with your MySQL Root password!"
-Q0="CREATE USER 'nzedb'@'localhost' IDENTIFIED BY '$passwordmysql';"
-Q1="GRANT ALL ON *.* TO 'nzedb'@'localhost' IDENTIFIED BY '$passwordmysql';"
-Q2="GRANT FILE ON *.* TO 'nzedb'@'localhost' IDENTIFIED BY '$passwordmysql';"
-Q3="FLUSH PRIVILEGES;"
-SQL="${Q0}${Q1}${Q2}${Q3}"
+Q0="CREATE DATABASE nntmux;"
+Q1="CREATE USER 'nntmux'@'localhost' IDENTIFIED BY '$passwordmysql';"
+Q2="GRANT ALL ON nntmux.* TO 'nntmux'@'localhost' IDENTIFIED BY '$passwordmysql';"
+Q3="GRANT FILE ON *.* TO 'nntmux'@'localhost' IDENTIFIED BY '$passwordmysql';"
+Q4="FLUSH PRIVILEGES;"
+SQL="${Q0}${Q1}${Q2}${Q3}${Q4}"
 mysql -uroot -e "$SQL"
 echo
 echo -e "-------------------------------------------------"
 echo -e "# WHEN FILLING THE DATABASE INFORMATION IN NZEDB#"
 echo -e "# USE '127.0.0.1' as the hostname!              #"
 echo -e "#                                               #"
-echo -e "# MySQL User: nzedb                             #"
+echo -e "# MySQL User: nntmux                            #"
 echo -e "# MySQL Pass: $passwordmysql  #"
 echo -e "#                                               #"
 echo -e "# Safe this login details for install nzedb     #"
@@ -247,25 +213,24 @@ echo -e "[DONE!]"
 
 echo -e "$YELLOW"
 echo -e "---> [Creatin nZEDb Apache 2 config...]""$BLACK"
-cat <<EOF >> nZEDb.conf
+cat <<EOF >> NNTmux.conf
 MDCertificateAgreement accepted
 MDomain FQDN
 <VirtualHost *:80>
     ServerName FQDN
-    DocumentRoot "/var/www/nZEDb/www"
-    Alias /covers /var/www/nZEDb/resources/covers
+    DocumentRoot "/var/www/NNTmux/public"
     Redirect / https://FQDN
 </VirtualHost>
 <VirtualHost *:443>
 	ServerAdmin webmaster@FQDN
         ServerName FQDN
         SSLEngine on      
-        DocumentRoot "/var/www/nZEDb/www"
-        Alias /covers /var/www/nZEDb/resources/covers
+        DocumentRoot "/var/www/NNTmux/public"
+        Alias /covers /var/www/NNTmux/resources/covers
         LogLevel warn
         ServerSignature Off
-        ErrorLog /var/log/apache2/error_nzedb.log
-        CustomLog /var/log/apache2/access_nzedb.log combined
+        ErrorLog /var/log/apache2/error_nntmux.log
+        CustomLog /var/log/apache2/access_nntmux.log combined
   
         <FilesMatch "\.(cgi|shtml|phtml|php)$">
                 SSLOptions +StdEnvVars
@@ -273,7 +238,7 @@ MDomain FQDN
         <Directory /usr/lib/cgi-bin>
                 SSLOptions +StdEnvVars
         </Directory>
-        <Directory "/var/www/nZEDb/www">
+        <Directory "/var/www/NNTmux/public">
                 Options FollowSymLinks
                 AllowOverride All
                 Require all granted
@@ -287,13 +252,13 @@ MDomain FQDN
         </FilesMatch>
 </VirtualHost>
 EOF
-sudo mv nZEDb.conf /etc/apache2/sites-available/
+sudo mv NNTmux.conf /etc/apache2/sites-available/
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 echo -e "$CYAN"
 read -r -p "Set Servername (eg. yourindex.com):" servername
-sed -i "s/\bFQDN\b/$servername/g" /etc/apache2/sites-available/nZEDb.conf
+sed -i "s/\bFQDN\b/$servername/g" /etc/apache2/sites-available/NNTmux.conf
 echo -e "$CYAN"
 echo -e "---> [Create SSL-Certificate and Key file...]""$BLACK"
 sudo touch /etc/ssl/certs/"$servername".pem > /dev/null
@@ -303,13 +268,14 @@ echo -e "---> [Disable Apache 2 default site...]""$BLACK"
 sudo a2dissite 000-default > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Enable nZEDb site config...]""$BLACK"
-sudo a2ensite nZEDb.conf > /dev/null
+sudo a2ensite NNTmux.conf > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Enable ModRewite...]""$BLACK"
 sudo a2enmod rewrite > /dev/null
 echo -e "$CYAN"
 echo -e "---> [Restart Apache 2...]""$BLACK"
 sudo systemctl restart apache2 > /dev/null
+sudo usermod -a -G www-data $USER
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -320,35 +286,101 @@ sudo apt-get install -y php-memcache php-memcached memcached > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-# Install nZEDb
+# Installing Composer for NNTmux
 echo -e "$YELLOW"
-echo -e "---> [nZEDb install...]""$BLACK"
-sudo mkdir /var/www/nZEDb/
-sudo chown www-data:www-data /var/www/nZEDb -R
-sudo chmod g+w /var/www/nZEDb/ -R
-sudo apt-get install php-imagick php-pear php7.2-curl php7.2-gd php7.2-json php7.2-dev php7.2-gd php7.2-mbstring php7.2-xml curl -y > /dev/null
-cd /var/www
-composer create-project --no-dev --keep-vcs --prefer-source nzedb/nzedb nZEDb
+echo -e "---> [Install Composer...]""$BLACK"
+#php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+#php -r "if (hash_file('sha384', 'composer-setup.php') === 'c5b9b6d368201a9db6f74e2611495f369991b72d9c8cbd3ffbc63edff210eb73d46ffbfce88669ad33695ef77dc76976') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+#php composer-setup.php
+#php -r "unlink('composer-setup.php');"
+#composer -V
+EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+ACTUAL_SIGNATURE="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
+
+if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]
+then
+    >&2 echo 'ERROR: Invalid installer signature'
+    rm composer-setup.php
+fi
+
+php composer-setup.php --quiet
+RESULT=$?
+rm composer-setup.php
+echo -e "$RESULT"
+sudo mv composer.phar /usr/local/bin/composer
+composer -V
+echo -e "$GREEN"
+echo -e "[DONE!]"
+
+# Install & Setting up NNTmux
+echo -e "$YELLOW"
+echo -e "---> [NNTmux install...]""$BLACK"
+newgrp www-data
+cd /var/www/
+git clone https://github.com/NNTmux/newznab-tmux.git NNTmux
+cd /var/www/NNTmux
+git fetch --all --tags --prune
+echo -e "$GREEN"
+echo -e "[DONE!]"
+echo -e "$YELLOW"
+echo -e "---> [Setting up NNTmux...]""$BLACK"
+cp .env.example .env
+read -r -p "NNTP User:" nntpuser
+read -r -p "NNTP Password:" nntppass
+read -r -p "NNTP Server:" nntpserver
+read -r -p "Admin User:" adminuser
+read -r -p "Admin Password:" adminpw
+read -r -p "Admin E-Mail:" adminmail
+echo -e "$YELLOW"
+echo -e "Edit /var/www/NNTmux/.env and add the following Parameters or replace them""$BLACK"
+echo -e "$RED"
+echo -e DB_USER=nntmux
+echo -e DB_PASSWORD=$passwordmysql
+echo -e DB_NAME=nntmux
+echo -e NNTP_USERNAME=$nntpuser
+echo -e NNTP_PASSWORD=$nntppass
+echo -e NNTP_SERVER=$nntpserver
+echo -e NNTP_PORT=586
+echo -e NNTP_SSLENABLED=true
+echo -e NNTP_SOCKET_TIMEOUT=120
+echo -e ADMIN_USER=$adminuser
+echo -e ADMIN_PASS=$adminpw
+echo -e ADMIN_EMAIL=$adminmail
+echo -e APP_ENV=production
+echo -e APP_DEBUG=false
+echo -e APP_TZ=Europe/Berlin
+echo -e APP_URL=$FQDN
+echo -e SESSION_DOMAIN=$FQDN
+echo -e ELASTICSEARCH_ENABLED=true"$BLACK"
+read -r -p "Press [Enter] to continue..."
+composer global require hirak/prestissimo
+composer install
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
 # Fixing Permissions
 echo -e "$YELLOW"
-echo -e "---> [nZEDb install...]""$BLACK"
-sudo chmod -R 755 /var/www/nZEDb/app/libraries
-sudo chmod -R 755 /var/www/nZEDb/libraries
-sudo chmod -R 777 /var/www/nZEDb/resources
-sudo chmod -R 777 /var/www/nZEDb/www
-sudo chgrp www-data nZEDb
-sudo chmod -R 777 /var/www/nZEDb
-sudo chgrp www-data /var/www/nZEDb/resources/smarty/templates_c
-sudo chgrp -R www-data /var/www/nZEDb/resources/covers
-sudo chgrp www-data /var/www/nZEDb/www
-sudo chgrp www-data /var/www/nZEDb/www/install
-sudo chgrp -R www-data /var/www/nZEDb/resources/nzb
-sudo chown -R www-data:www-data /var/lib/php/sessions/
+echo -e "---> [Fixing Permissions...]""$BLACK"
+sudo chown -R nntmux:www-data /var/www/NNTmux/bootstrap/cache/
+sudo chown -R nntmux:www-data /var/www/NNTmux/storage/logs/
+sudo chown -R nntmux:www-data /var/www/NNTmux/resources/tmp/
+sudo chown -R nntmux:www-data /var/www/NNTmux/public/
+sudo chmod -R 755 /var/www/NNTmux/vendor/
+sudo chmod -R 777 /var/www/NNTmux/storage/
+sudo chmod -R 777 /var/www/NNTmux/resources/
+sudo chmod -R 777 /var/www/NNTmux/public/
+php artisan nntmux:install
 echo -e "$GREEN"
 echo -e "[DONE!]"
+
+# Install Elasticsearch
+echo -e "$YELLOW"
+echo -e "---> [Elasticsearch install...]""$BLACK"
+cd /var/www/NNTmux/misc/elasticsearch/
+php create_es_tables.php
+php populate_es_indexes.php releases
+php populate_es_indexes.php predb
 
 # Complete the Web Setup!
 
@@ -376,12 +408,12 @@ read -r -p "Press [Enter] to continue..."
 # Import Daily Dumps
 echo -e "$YELLOW"
 echo -e "---> [Importing Daily Dumps...]""$BLACK"
-sudo chmod 777 /var/www/nZEDb/resources
-sudo chown -R "$usernamenzb":www-data /var/www/nZEDb/cli
+sudo chmod 777 /var/www/NNTmux/resources
+sudo chown -R "$usernamenzb":www-data /var/www/NNTmux/cli
 echo
 echo -e "$RED""PLEASE BE PATIENT!  THIS   + M A Y +   TAKE A LONG TIME!""$BLACK"
 echo
-sudo php /var/www/nZEDb/cli/data/predb_import_daily_batch.php 0 local true
+sudo php /var/www/NNTmux/cli/data/predb_import_daily_batch.php 0 local true
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -397,12 +429,6 @@ cd tmux
 make -j4
 sudo make install
 make clean
-echo -e "$GREEN"
-echo -e "[DONE!]"
-
-echo -e "$YELLOW"
-echo -e "---> [Configuring TMUX To Run On Startup...]""$BLACK"
-(crontab -l 2>/dev/null; echo "@reboot /bin/sleep 10; /usr/bin/php /var/www/nZEDb/misc/update/nix/tmux/start.php" | crontab -) || true
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
