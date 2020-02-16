@@ -171,9 +171,13 @@ mysql_secure_installation
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-# Install libapache2-mod-php7.2
+# Install Apache 2.4.4
 echo -e "$YELLOW"
-echo -e "---> [Installing libapache2-mod-php7.2...]""$BLACK"
+echo -e "---> [Installing Apache 2.4.4...]""$BLACK"
+wget -q -O- https://packages.sury.org/apache2/apt.gpg | apt-key add - > /dev/null
+echo "deb https://packages.sury.org/apache2/ stretch main" | tee /etc/apt/sources.list.d/apache2.list > /dev/null
+apt-get update -y > /dev/null
+apt-get upgrade -y > /dev/null
 apt-get install -y libapache2-mod-php7.2 > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
