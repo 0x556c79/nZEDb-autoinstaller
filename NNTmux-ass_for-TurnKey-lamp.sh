@@ -60,13 +60,10 @@ usermod -aG www-data "$usernamenzb" || true
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
-# Updating System
+# Installing apt-utils & apt-transport-https
 echo -e "$YELLOW"
-echo -e "---> [Updating System...]""$BLACK"
+echo -e "---> [Installing apt-utils & apt-transport-https...]""$BLACK"
 apt-get install -y apt-utils apt-transport-https > /dev/null
-apt-get update > /dev/null
-apt-get -y upgrade > /dev/null
-apt-get -y dist-upgrade > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
