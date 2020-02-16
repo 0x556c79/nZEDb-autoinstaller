@@ -87,8 +87,8 @@ echo -e "[DONE!]"
 
 # Add repo for PHP 7.2
 echo -e "$YELLOW"
-wget -q -O- https://packages.sury.org/php/apt.gpg | apt-key add -
-echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list
+wget -q -O- https://packages.sury.org/php/apt.gpg | apt-key add - > /dev/null
+echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list > /dev/null
 apt-get update -y > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
