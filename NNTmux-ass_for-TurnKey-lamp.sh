@@ -32,7 +32,7 @@ echo -e " | | | \ \/ /___ \|___ \| '_ \ \/ /  / / \__, | "
 echo -e " | |_| |>  < ___) |___) | (_) >  <  / /    / /  "
 echo -e "  \___//_/\_\____/|____/ \___/_/\_\/_/    /_/   "
 echo -e "$CYAN"
-echo -e "nZEDb Auto Installer by by 0x556x79"
+echo -e "NNTmux Auto Installer by by 0x556x79"
 echo
 
 echo -e "$RED"' You use this Script on your own risk!'"$BLACK"
@@ -74,7 +74,6 @@ echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Installing Basic Software...]""$BLACK"
 apt-get install -y ca-certificates nano curl git htop man software-properties-common git make par2 unzip wget tmux ntp ntpdate time tcptrack bwm-ng mariadb-client-10.1 > /dev/null
-python3 -m easy_install pip > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
