@@ -16,8 +16,8 @@ GREEN='\e[92m'
 set -euo pipefail
 
 # Change to /temp
-mkdir /tmp/nzedb
-cd /tmp/nzedb
+mkdir /tmp/nntmux
+cd /tmp/nntmux
 
 # Make sure to clear the Terminal
 clear
@@ -63,6 +63,8 @@ echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Updating System...]""$BLACK"
 apt-get update > /dev/null
+apt-get install -y apt-utils > /dev/null
+apt-get install -y apt-transport-https > /dev/null
 apt-get -y upgrade > /dev/null
 apt-get -y dist-upgrade > /dev/null
 echo -e "$GREEN"
@@ -320,12 +322,12 @@ newgrp www-data
 cd /var/www/
 git clone https://github.com/NNTmux/newznab-tmux.git NNTmux
 cd /var/www/NNTmux
-git fetch --all --tags --prune
+git fetch --all --tags --prune > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 echo -e "$YELLOW"
 echo -e "---> [Setting up NNTmux...]""$BLACK"
-cp .env.example .env
+cp .env.example .env > /dev/null
 read -r -p "NNTP User:" nntpuser
 read -r -p "NNTP Password:" nntppass
 read -r -p "NNTP Server:" nntpserver
