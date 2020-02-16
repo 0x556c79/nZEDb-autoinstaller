@@ -16,6 +16,7 @@ GREEN='\e[92m'
 set -euo pipefail
 
 # Change to /temp
+rm -r /tmp/nntmux
 mkdir /tmp/nntmux
 cd /tmp/nntmux
 
