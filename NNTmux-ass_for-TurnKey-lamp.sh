@@ -127,13 +127,15 @@ echo -e "$YELLOW"
 echo -e "---> [Configure MariaB...]""$BLACK"
 cat <<EOF >> /etc/mysql/mariadb.conf.d/51-nntmux.cnf
 [mysqld]
+innodb_file_format = BARRACUDA
+innodb_large_prefix = 1
 innodb_file_per_table = 1
 innodb_buffer_pool_size = 256M
+innodb_buffer_pool_dump_at_shutdown = 1
+innodb_buffer_pool_load_at_startup  = 1
+innodb_checksum_algorithm = crc32
 group_concat_max_len = 8192
 sql_mode = ''
-innodb_buffer_pool_dump_at_shutdown = ON
-innodb_buffer_pool_load_at_startup  = ON
-innodb_checksum_algorithm           = crc32
 EOF
 systemctl restart mysql 
 echo -e "$GREEN"
