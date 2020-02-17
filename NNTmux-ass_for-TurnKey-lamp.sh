@@ -119,6 +119,23 @@ sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php/7.4/fpm/php.ini
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
+# Install MariaDB 10.4
+echo -e "$YELLOW"
+echo -e "---> [Installing MariaDB 10.4...]""$BLACK"
+wget https://mariadb.org/mariadb_release_signing_key.asc > /dev/null
+apt-key add mariadb_release_signing_key.asc > /dev/null
+rm mariadb_release_signing_key.asc > /dev/null
+cat <<EOF >> /etc/apt/sources.list.d/mariadb.list
+# MariaDB 10.4 repository list - created 2020-02-17 02:20 UTC
+# http://downloads.mariadb.org/mariadb/repositories/
+deb [arch=amd64,i386,ppc64el] http://mirror.jaleco.com/mariadb/repo/10.4/debian stretch main
+deb-src http://mirror.jaleco.com/mariadb/repo/10.4/debian stretch main
+EOF
+apt-get update > /dev/null
+apt-get upgrade -y > /dev/null
+echo -e "$GREEN"
+echo -e "[DONE!]"
+
 # Configure MariaB
 echo -e "$YELLOW"
 echo -e "---> [Starting MariaDB...]""$BLACK"
