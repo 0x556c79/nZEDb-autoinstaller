@@ -320,10 +320,10 @@ echo -e "[DONE!]"
 # Install & Setting up NNTmux
 echo -e "$YELLOW"
 echo -e "---> [NNTmux install...]""$BLACK"
-newgrp www-data
-cd /var/www/
+newgrp www-data > /dev/null
+cd /var/www/ > /dev/null
 git clone https://github.com/NNTmux/newznab-tmux.git NNTmux
-cd /var/www/NNTmux
+cd /var/www/NNTmux > /dev/null
 git fetch --all --tags --prune > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
@@ -351,7 +351,7 @@ echo -e ADMIN_PASS="$adminpw"
 echo -e ADMIN_EMAIL="$adminmail"
 echo -e APP_ENV=production
 echo -e APP_DEBUG=false
-echo -e APP_TZ=Europe\Berlin
+echo -e APP_TZ=Europe/Berlin
 echo -e APP_URL="$FQDN
 echo -e SESSION_DOMAIN="$FQDN"
 echo -e ELASTICSEARCH_ENABLED=true"$BLACK"
