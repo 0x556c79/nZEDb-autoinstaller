@@ -203,7 +203,6 @@ touch /etc/apache2/mods-available/md.load > /dev/null
 echo LoadModule md_module /usr/lib/apache2/modules/mod_md.so > /etc/apache2/mods-available/md.load
 apachectl stop > /dev/null
 a2dismod php7.0 > /dev/null
-a2dismod php7.2 > /dev/null
 a2dismod php7.4 > /dev/null
 a2dismod mpm_prefork > /dev/null
 a2enmod md > /dev/null
