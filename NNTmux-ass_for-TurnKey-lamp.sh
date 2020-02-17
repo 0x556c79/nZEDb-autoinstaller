@@ -180,7 +180,7 @@ wget -q -O- https://packages.sury.org/apache2/apt.gpg | apt-key add - > /dev/nul
 echo "deb https://packages.sury.org/apache2/ stretch main" | tee /etc/apt/sources.list.d/apache2.list > /dev/null
 apt-get update -y > /dev/null
 apt-get upgrade -y > /dev/null
-apt-get install -y libapache2-mod-php7.2 > /dev/null
+apt-get install -y libapache2-mod-php7.4 > /dev/null
 echo -e "$GREEN"
 echo -e "[DONE!]"
 
@@ -202,15 +202,16 @@ echo -e "---> [Configure Apache 2...]""$BLACK"
 touch /etc/apache2/mods-available/md.load > /dev/null
 echo LoadModule md_module /usr/lib/apache2/modules/mod_md.so > /etc/apache2/mods-available/md.load
 apachectl stop > /dev/null
-a2dismod php7.2 > /dev/null
 a2dismod php7.0 > /dev/null
+a2dismod php7.2 > /dev/null
+a2dismod php7.4 > /dev/null
 a2dismod mpm_prefork > /dev/null
 a2enmod md > /dev/null
 a2enmod rewrite > /dev/null
 a2enmod proxy_fcgi > /dev/null
 a2enmod setenvif > /dev/null
 a2enmod mpm_event > /dev/null
-a2enconf php7.2-fpm > /dev/null
+a2enconf php7.4-fpm > /dev/null
 systemctl start apache2
 echo -e "$GREEN"
 echo -e "[DONE!]"
